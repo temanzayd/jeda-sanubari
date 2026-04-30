@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v15.3 - Precision Edition</title>
+    <title>JedaSanubari v15.4 - Hadith Integrity</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at top right, #f0fdf4, #f8fafc); min-height: 100vh; color: #0f172a; }
         .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 2.5rem; box-shadow: 0 20px 50px -12px rgba(5, 150, 105, 0.1); }
-        .arabic-text { font-family: 'Amiri', serif; direction: rtl; text-align: right; line-height: 1.8; font-size: 2.2rem; font-weight: 700; color: #064e3b; word-spacing: 2px; }
-        .btn-action { background: linear-gradient(135deg, #059669 0%, #064e3b 100%); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .btn-action:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+        .arabic-text { font-family: 'Amiri', serif; direction: rtl; text-align: right; line-height: 1.8; font-size: 2.1rem; font-weight: 700; color: #064e3b; }
+        .btn-action { background: linear-gradient(135deg, #059669 0%, #064e3b 100%); transition: all 0.4s ease; }
+        .btn-action:disabled { background: #cbd5e1; cursor: not-allowed; }
         .label-soul { color: #065f46; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; display: block; margin-bottom: 0.5rem; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-up { animation: slideUp 0.8s ease-out forwards; }
@@ -21,7 +21,7 @@
 
     <header class="text-center mb-12 animate-up">
         <h1 class="text-3xl font-extrabold text-emerald-950 tracking-tighter italic mb-1">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[9px] uppercase tracking-[0.4em] text-emerald-600/50 mt-3 font-bold text-center">Menepi sejenak dalam bimbingan langit</p>
+        <p class="text-[9px] uppercase tracking-[0.4em] text-emerald-600/50 mt-3 font-bold text-center italic">Akurasi Dalil & Kedalaman Hikmah</p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-8 mb-10 animate-up">
@@ -29,10 +29,10 @@
             <span class="label-soul">Munajat Hati</span>
             <span id="wordCounter" class="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full transition-all">0 / 10 Kata</span>
         </div>
-        <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan bisikan hati Bapak (minimal 10 kata)..." 
+        <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan curahan hati Bapak (min 10 kata)..." 
             class="w-full bg-transparent focus:outline-none text-slate-700 text-lg h-32 resize-none italic placeholder:text-slate-300"></textarea>
         <div class="flex justify-center pt-6 border-t border-slate-100">
-            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-action text-white px-12 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 shadow-xl shadow-emerald-100">
+            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-action text-white px-12 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 shadow-xl">
                 Jemput Petunjuk
             </button>
         </div>
@@ -69,27 +69,24 @@
             const content = document.getElementById('aiContent');
 
             btn.disabled = true;
-            btn.innerText = "VERIFIKASI DALIL...";
+            btn.innerText = "MENGEVALUASI DALIL...";
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-16 text-center text-emerald-800 italic animate-pulse">Menghubungkan sanubari dengan akurasi wahyu...</div>`;
+            content.innerHTML = `<div class="glass-card p-16 text-center text-emerald-800 italic animate-pulse">Memastikan keaslian teks Arab dan sanad...</div>`;
 
             const systemPrompt = `
-            Konteks Masalah: "${input}". 
-            Tugas Anda adalah memberikan jawaban Islami yang AKURAT & SINKRON.
-            SYARAT MUTLAK:
-            1. Quran: Pilih Ayat yang PALING RELEVAN. Pastikan Teks Arab, Nama Surah, Nomor Ayat, dan Terjemahan Bahasa Indonesia adalah BENAR & Sesuai Mushaf.
-            2. Hadits: Harus Shahih (Bukhari/Muslim/Lainnya) dan sinkron dengan tema Ayat.
-            3. Sirah: Kisah Nabi/Sahabat yang membingkai tema tersebut.
-            4. Tadabbur: Gaya bicara ${selected.name} yang menyatukan semua poin di atas untuk menjawab masalah user.
+            Konteks: "${input}".
+            TUGAS KRITIS: Berikan kutipan Quran & Hadits yang 100% ASLI & AKURAT. 
+            DILARANG KERAS mengarang teks Arab. Jika tidak tahu teks aslinya, cari yang populer dan valid.
+            WAJIB SINKRON antara teks Arab, Terjemahan, dan Nomor Referensi.
 
-            Keluarkan JSON MURNI:
+            Output JSON MURNI:
             { 
-                "tema": "Judul Tema",
-                "quran": {"arab": "Teks Arab Asli", "ref": "Nama Surah:Nomor Ayat", "indo": "Terjemahan Indonesia", "tafsir": "Tafsir ringkas"}, 
-                "hadits": {"arab": "Teks Arab", "rawi": "Perawi", "no": "Nomor Hadits", "indo": "Arti Hadits", "syarah": "Pesan hadits"}, 
-                "sirah": {"kisah": "Detail kisah", "tokoh": "Nama Tokoh"}, 
-                "tadabbur": "Nasihat mendalam", 
-                "keyword": "Youtube Keyword" 
+                "tema": "Tema Sentral",
+                "quran": {"arab": "Teks Arab (Mushaf)", "ref": "Surah:Ayat", "indo": "Arti Indonesia", "tafsir": "Pesan utama"}, 
+                "hadits": {"arab": "Teks Arab Shahih", "rawi": "Perawi", "no": "Nomor Hadits", "indo": "Arti Hadits", "syarah": "Pesan hadits"}, 
+                "sirah": {"kisah": "Detail kisah", "tokoh": "Tokoh"}, 
+                "tadabbur": "Nasihat gaya ${selected.name}", 
+                "keyword": "Pencarian Youtube" 
             }`;
 
             try {
@@ -99,7 +96,8 @@
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
                         messages: [{ role: "system", content: systemPrompt }],
-                        temperature: 0, // Dibuat 0 agar lebih presisi/faktual, bukan kreatif.
+                        temperature: 0,
+                        top_p: 1,
                         response_format: { "type": "json_object" }
                     })
                 });
@@ -111,23 +109,23 @@
                     <div class="text-center mb-8"><span class="px-6 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full shadow-lg">Tema: ${res.tema}</span></div>
                     
                     <div class="glass-card p-8 mb-6 animate-up shadow-lg">
-                        <span class="label-soul">Kalamullah (Al-Qur'an)</span>
+                        <span class="label-soul">Kalamullah</span>
                         <p class="arabic-text my-6">${res.quran.arab}</p>
-                        <p class="text-[10px] font-bold text-emerald-700 mb-2 uppercase tracking-widest">${res.quran.ref}</p>
+                        <p class="text-[10px] font-bold text-emerald-700 mb-2 uppercase tracking-widest text-center">${res.quran.ref}</p>
                         <p class="text-slate-800 leading-relaxed font-semibold mb-6">${res.quran.indo}</p>
                         <div class="p-6 bg-emerald-50/50 rounded-2xl border-l-4 border-emerald-500 text-sm text-slate-600 italic leading-relaxed">${res.quran.tafsir}</div>
                     </div>
 
                     <div class="glass-card p-8 mb-6 animate-up shadow-lg">
-                        <span class="label-soul">Pesan Nabawi (Al-Hadits)</span>
+                        <span class="label-soul">Pesan Nabawi</span>
                         <p class="arabic-text my-6">${res.hadits.arab}</p>
-                        <p class="text-[10px] font-bold text-emerald-700 mb-2 uppercase tracking-widest">HR. ${res.hadits.rawi} (No. ${res.hadits.no})</p>
+                        <p class="text-[10px] font-bold text-emerald-700 mb-2 uppercase tracking-widest text-center">HR. ${res.hadits.rawi} (No. ${res.hadits.no})</p>
                         <p class="text-slate-800 leading-relaxed font-semibold mb-6">${res.hadits.indo}</p>
                         <div class="p-6 bg-emerald-50/50 rounded-2xl border-l-4 border-emerald-500 text-sm text-slate-600 italic leading-relaxed">${res.hadits.syarah}</div>
                     </div>
 
                     <div class="glass-card p-8 mb-6 animate-up shadow-lg">
-                        <span class="label-soul">Hikmah Sirah</span>
+                        <span class="label-soul">Jejak Salaf</span>
                         <p class="text-slate-800 leading-relaxed italic mb-6">"${res.sirah.kisah}"</p>
                         <a href="https://www.youtube.com/results?search_query=kisah+sirah+${res.sirah.tokoh.replace(/ /g, '+')}" target="_blank" class="text-[9px] font-black text-emerald-700 uppercase border-b-2 border-emerald-100 pb-1 tracking-widest">Dalami Kisah ${res.sirah.tokoh} ↗</a>
                     </div>
@@ -145,7 +143,7 @@
                     </div>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="glass-card p-10 text-red-600 text-center font-bold">Terjadi gangguan transmisi hikmah. Mohon coba beberapa saat lagi.</div>`;
+                content.innerHTML = `<div class="glass-card p-10 text-red-600 text-center font-bold">Maaf, transmisi terputus. Mohon coba lagi.</div>`;
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Jemput Petunjuk";
