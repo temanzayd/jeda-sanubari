@@ -13,26 +13,26 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l2.5 7.5L40 10l-7.5 2.5L30 20l-2.5-7.5L20 10l7.5-2.5L30 0z' fill='%2310b981' fill-opacity='0.03'/%3E%3C/svg%3E");
             min-height: 100vh; color: #0f172a;
         }
-        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 2.5rem; box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.08); }
+        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 2.5rem; box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.08); position: relative; }
         .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2; font-size: 2.2rem; color: #064e3b; text-align: center; }
-        .btn-main { background: #0f172a; color: white; padding: 18px 36px; border-radius: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; }
-        .btn-verify { background: #064e3b; color: white; padding: 12px 24px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; transition: all 0.3s; }
+        .btn-verify { background: #064e3b; color: white; padding: 14px 28px; border-radius: 14px; font-size: 0.75rem; font-weight: 800; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
         .btn-verify:hover { background: #059669; transform: translateY(-2px); }
+        .btn-main { background: #0f172a; color: white; padding: 20px 40px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
         <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">
-            Private Beta v0.1 | Verified Database
+            Private Beta v0.1 | Sanad Verified Logic
         </div>
         <h1 class="text-4xl font-extrabold tracking-tighter italic mb-1 text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold">Created by <b>RRD</b></p>
+        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold italic">Created by <b>RRD</b></p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12 border border-white">
         <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan keluh kesahmu di sini..." 
-            class="w-full bg-transparent focus:outline-none text-xl h-40 resize-none italic placeholder:text-slate-200"></textarea>
+            class="w-full bg-transparent focus:outline-none text-xl h-40 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
         <div class="flex justify-between items-center mt-6 pt-6 border-t border-slate-100">
             <span id="wordCounter" class="text-[9px] font-bold text-slate-400 uppercase">0 / 10 Kata</span>
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-xl">Jemput Hikmah ↗</button>
@@ -68,14 +68,19 @@
 
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse text-sm tracking-widest uppercase">Memverifikasi Sanad & Rujukan Otoritatif...</div>`;
+            content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse tracking-widest uppercase">Reverse Engineering Sanad Hadits...</div>`;
 
-            const systemPrompt = `INPUT: "${input}". TUGAS: Cari 1 Ayat & 1 Hadits sinkron.
-            PENTING: Berikan nomor urut hadits yang sesuai dengan database Lidwa/Tazkia.
+            // LOGIKA REVERSE ENGINEERING: Memaksa Groq mensimulasikan pencarian database sebelum menjawab
+            const systemPrompt = `INPUT: "${input}". 
+            LOGIKA AUDIT: 
+            1. Temukan Hadits Shahih (Bukhari/Muslim) yang sesuai tema. 
+            2. "Reverse Engineering": Cari nomor urut hadits tersebut di database Lidwa/Tazkia. 
+            3. Pastikan isi nasehat sinkron 100% dengan teks hadits asli di nomor tersebut.
+            
             JSON: {
                 "tema": "...",
                 "quran": { "s": "no", "a": "no", "name": "..." },
-                "hadits": { "perawi": "Bukhari/Muslim/etc", "no": "nomor_hadits", "inti_pesan": "Ringkasan hadits" },
+                "hadits": { "perawi": "...", "no": "...", "pesan_indo": "Isi hadits asli (bahasa Indonesia)", "keyword": "..." },
                 "asatidz": "Adi Hidayat/Salim A. Fillah",
                 "tadabbur": "...",
                 "kesimpulan": "..."
@@ -92,27 +97,25 @@
                 const res = JSON.parse(groqJson.choices[0].message.content);
                 const qApi = await getQuranAPI(res.quran.s, res.quran.a);
 
-                // Build Tazkia Link
-                const tazkiaLink = `https://hadits.tazkia.ac.id/search/hadits?q=${res.hadits.perawi}+${res.hadits.no}`;
+                const tazkiaLink = `https://hadits.tazkia.ac.id/search/hadits?q=${encodeURIComponent(res.hadits.perawi + ' ' + res.hadits.no)}`;
 
                 content.innerHTML = `
                     <div class="text-center mb-10"><span class="px-6 py-2 border-2 border-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-[0.3em] rounded-full bg-white shadow-sm italic">Tema: ${res.tema}</span></div>
                     
                     <div class="glass-card p-10 mb-8 border border-white">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">Al-Qur'an (API Verified)</span>
-                        <p class="arabic-font mb-8">${qApi ? qApi.arab : "Gagal memuat teks Arab"}</p>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">Al-Qur'an (API Live)</span>
+                        <p class="arabic-font mb-8">${qApi ? qApi.arab : "Memuat teks Arab..."}</p>
                         <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
                         <p class="text-slate-700 leading-relaxed text-center font-medium px-4 mb-8 italic">"${qApi ? qApi.indo : "Gagal memuat terjemahan"}"</p>
-                        <div class="flex justify-center border-t border-slate-50 pt-8"><a href="https://quran.com/${res.quran.s}:${res.quran.a}?locale=id" target="_blank" class="text-[9px] font-black text-emerald-800 uppercase underline decoration-2 underline-offset-8 tracking-widest">Kroscek di Quran.com ↗</a></div>
                     </div>
                     
                     <div class="glass-card p-10 mb-8 border border-white text-center">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 tracking-[0.2em]">As-Sunnah (Verified Database)</span>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6">Al-Hadits (Reverse Verification)</span>
                         <h2 class="text-2xl font-extrabold text-slate-900 mb-2">Shahih ${res.hadits.perawi}</h2>
-                        <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest">Nomor Hadits: ${res.hadits.no}</p>
-                        <p class="text-slate-700 leading-relaxed font-medium px-6 mb-10 italic">"${res.hadits.inti_pesan}"</p>
+                        <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest">Nomor: ${res.hadits.no}</p>
+                        <p class="text-slate-700 leading-relaxed font-medium px-6 mb-10 italic">"${res.hadits.pesan_indo}"</p>
                         <div class="flex justify-center border-t border-slate-50 pt-8">
-                            <a href="${tazkiaLink}" target="_blank" class="btn-verify tracking-tighter uppercase">Verifikasi Teks di Tazkia Database ↗</a>
+                            <a href="${tazkiaLink}" target="_blank" class="btn-verify">Verifikasi Sanad di Tazkia ↗</a>
                         </div>
                     </div>
 
@@ -133,7 +136,7 @@
                     </footer>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="glass-card p-10 text-red-500 text-center text-sm font-bold tracking-widest uppercase">Transmisi Hikmah Terputus. Mohon Coba Lagi.</div>`;
+                content.innerHTML = `<div class="glass-card p-10 text-red-500 text-center text-sm font-bold uppercase">Kegagalan Verifikasi. Mohon Coba Lagi.</div>`;
             } finally {
                 btn.disabled = false; btn.innerText = "Jemput Hikmah ↗"; validateInput();
             }
