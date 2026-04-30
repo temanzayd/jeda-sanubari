@@ -33,7 +33,7 @@
             font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .btn-main:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+        .btn-main:disabled { background: #cbd5e1; cursor: not-allowed; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
@@ -49,7 +49,7 @@
     <div class="w-full max-w-xl glass-card p-10 mb-12">
         <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-6">
             <span class="text-[10px] font-black text-emerald-800 uppercase tracking-[0.2em]">Ruang Munajat</span>
-            <span id="wordCounter" class="text-[9px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">0 / 10 Kata</span>
+            <span id="wordCounter" class="text-[9px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100 transition-all">0 / 10 Kata</span>
         </div>
         <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan apa yang mengusik ketenangan Bapak (min. 10 kata)..." 
             class="w-full bg-transparent focus:outline-none text-slate-700 text-xl h-40 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
@@ -62,9 +62,8 @@
 
     <div id="resultArea" class="w-full max-w-xl hidden space-y-8 pb-32">
         <div id="aiContent"></div>
-        
         <footer class="text-center pt-12 border-t border-slate-200/50">
-            <p class="text-[0.65rem] color-[#94a3b8] tracking-[0.6em] font-extrabold mb-3">CREATED BY <b>RRD</b></p>
+            <p class="text-[0.65rem] text-slate-400 tracking-[0.6em] font-extrabold mb-3">CREATED BY <b>RRD</b></p>
             <p class="text-[8px] text-slate-400 px-12 leading-relaxed italic opacity-70 uppercase tracking-widest">
                 Sistem merujuk langsung ke sumber otoritatif guna menghindari halusinasi teks. <br> 
                 Kesimpulan AI adalah bahan renungan, bukan rujukan fatwa resmi.
@@ -87,7 +86,6 @@
             const counter = document.getElementById('wordCounter');
             counter.innerText = `${words} / 10 Kata`;
             btn.disabled = words < 10;
-            counter.className = words >= 10 ? "text-[9px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100" : "text-[9px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100";
         }
 
         async function pancarHikmah() {
@@ -102,14 +100,15 @@
             content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse text-sm">Menjemput rujukan otoritatif...</div>`;
 
             const systemPrompt = `INPUT: "${input}". 
-            TUGAS: Cari 1 Ayat & 1 Hadits sinkron. 
-            ROLE: Jadilah seorang ulama yang sangat bijak seperti ${selected.name}. 
-            OUTPUT JSON: {
+            TUGAS: Cari 1 Ayat & 1 Hadits sinkron.
+            PENTING: Field 'hadits_no' WAJIB angka spesifik (jangan NONE). Jika tidak tahu, cari hadits lain yang valid & relevan. 
+            ROLE: Jadilah seorang ulama yang sangat bijak seperti ${selected.name}.
+            JSON: {
                 "tema": "...",
                 "quran": { "surah_no": "...", "ayat_no": "...", "surah_name": "...", "pesan": "..." },
-                "hadits": { "perawi": "...", "hadits_no": "...", "pesan": "..." },
-                "kesimpulan": "Berikan intisari hikmah yang sangat menyejukkan dalam 2-3 kalimat sebagai penutup nasehat.",
-                "tadabbur": "Nasehat utama gaya ${selected.name} terkait masalah user"
+                "hadits": { "perawi": "...", "hadits_no": "Nomor Angka", "pesan": "..." },
+                "kesimpulan": "Berikan intisari hikmah menyejukkan (2-3 kalimat).",
+                "tadabbur": "Nasehat gaya ${selected.name}"
             }`;
 
             try {
@@ -127,7 +126,7 @@
                     <div class="text-center mb-10"><span class="px-6 py-2 border-2 border-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-[0.3em] rounded-full bg-white shadow-sm italic">Tema: ${res.tema}</span></div>
                     
                     <div class="glass-card p-10 mb-8">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">Rujukan Al-Qur'an</span>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center tracking-[0.2em]">Rujukan Al-Qur'an</span>
                         <h2 class="text-2xl font-extrabold text-center text-slate-900 mb-2">${res.quran.surah_name}</h2>
                         <p class="text-center text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest">Ayat ${res.quran.ayat_no}</p>
                         <p class="text-slate-700 leading-relaxed text-center italic mb-10 font-medium px-4">"${res.quran.pesan}"</p>
@@ -137,7 +136,7 @@
                     </div>
                     
                     <div class="glass-card p-10 mb-8">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">Rujukan Al-Hadits</span>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center tracking-[0.2em]">Rujukan Al-Hadits</span>
                         <h2 class="text-2xl font-extrabold text-center text-slate-900 mb-2">HR. ${res.hadits.perawi}</h2>
                         <p class="text-center text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest">Nomor ${res.hadits.hadits_no}</p>
                         <p class="text-slate-700 leading-relaxed text-center italic mb-10 font-medium px-4">"${res.hadits.pesan}"</p>
@@ -148,7 +147,9 @@
 
                     <div class="glass-card p-12 bg-slate-900 text-white border-none shadow-2xl mb-8">
                         <div class="flex items-center gap-6 mb-8">
-                            <img src="${avatarUrl}" class="w-16 h-16 rounded-2xl border-2 border-white/10 shadow-lg" alt="${selected.name}">
+                            <div class="w-16 h-16 rounded-2xl border-2 border-white/10 shadow-lg flex items-center justify-center overflow-hidden">
+                                <img src="${avatarUrl}" class="w-full h-full object-cover">
+                            </div>
                             <div>
                                 <p class="text-[9px] uppercase tracking-widest font-bold text-slate-500 mb-1">Dawuh Asatidz</p>
                                 <h3 class="text-2xl font-extrabold tracking-tight">Ustadz ${selected.name}</h3>
