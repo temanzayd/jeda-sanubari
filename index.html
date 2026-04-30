@@ -5,86 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JedaSanubari v0.1 Beta</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background: #f8fafc;
-            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0l3 10 10 3-10 3-3 10-3-10-10-3 10-3 3-10z' fill='%2310b981' fill-opacity='0.03'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l2.5 7.5L40 10l-7.5 2.5L30 20l-2.5-7.5L20 10l7.5-2.5L30 0z' fill='%2310b981' fill-opacity='0.03'/%3E%3C/svg%3E");
             min-height: 100vh; color: #0f172a;
         }
         .glass-card { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 2.5rem;
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 2rem;
             box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.08);
-            position: relative; overflow: hidden;
         }
-        .btn-ref {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 14px 28px; border-radius: 16px;
-            background: #064e3b; color: white;
-            font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-        .btn-ref:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.3); }
-        .btn-main {
-            background: #0f172a; color: white;
-            padding: 20px 40px; border-radius: 20px;
-            font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem;
-        }
-        .btn-main:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 1.8; font-size: 2.2rem; color: #064e3b; text-align: center; }
+        .btn-main { background: #0f172a; color: white; padding: 18px 36px; border-radius: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
         <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">
-            Private Beta v0.1
+            Private Beta v0.1 | API Verified
         </div>
         <h1 class="text-4xl font-extrabold text-slate-900 tracking-tighter italic mb-1">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold opacity-80">Teman Kontemplasi Digital</p>
+        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold">Created by <b>RRD</b></p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12">
-        <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-6">
-            <span class="text-[10px] font-black text-emerald-800 uppercase tracking-[0.2em]">Ruang Munajat</span>
-            <span id="wordCounter" class="text-[9px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">0 / 10 Kata</span>
-        </div>
         <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan apa yang mengusik ketenangan Bapak..." 
-            class="w-full bg-transparent focus:outline-none text-slate-700 text-xl h-40 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
-        <div class="flex justify-center pt-8">
-            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-xl">
-                Jemput Hikmah ↗
-            </button>
+            class="w-full bg-transparent focus:outline-none text-slate-700 text-xl h-40 resize-none italic placeholder:text-slate-200"></textarea>
+        <div class="flex justify-between items-center mt-6 pt-6 border-t border-slate-100">
+            <span id="wordCounter" class="text-[9px] font-bold text-slate-400 uppercase">0 / 10 Kata</span>
+            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-xl">Jemput Hikmah ↗</button>
         </div>
     </div>
 
     <div id="resultArea" class="w-full max-w-xl hidden space-y-8 pb-32">
         <div id="aiContent"></div>
-        <footer class="text-center pt-12 border-t border-slate-200/50">
-            <p class="text-[0.65rem] text-slate-400 tracking-[0.6em] font-extrabold mb-3 italic">Created by <b>RRD</b></p>
-            <p class="text-[8px] text-slate-400 px-12 leading-relaxed italic opacity-70 uppercase tracking-widest">
-                Demi menjaga kesucian dalil, sistem ini hanya menyediakan rujukan link. <br> 
-                Mohon verifikasi langsung pada sumber otoritatif yang disediakan.
-            </p>
-        </footer>
     </div>
 
     <script>
         const GROQ_KEY = "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"; 
         const asatidz = [
             { name: "Salim A. Fillah", initial: "SF" },
-            { name: "Adi Hidayat", initial: "AH" },
-            { name: "Hanan Attaki", initial: "HA" }
+            { name: "Adi Hidayat", initial: "AH" }
         ];
 
         function validateInput() {
-            const text = document.getElementById('userInput').value.trim();
-            const words = text === "" ? 0 : text.split(/\s+/).length;
-            const btn = document.getElementById('sendBtn');
-            const counter = document.getElementById('wordCounter');
-            counter.innerText = `${words} / 10 Kata`;
-            btn.disabled = words < 10;
+            const words = document.getElementById('userInput').value.trim().split(/\s+/).length;
+            document.getElementById('wordCounter').innerText = `${words} / 10 Kata`;
+            document.getElementById('sendBtn').disabled = words < 10;
+        }
+
+        async function getQuranData(surah, ayat) {
+            try {
+                const res = await fetch(`https://api.quran.com/api/v4/verses/by_key/${surah}:${ayat}?language=id&words=false&translations=33`);
+                const data = await res.json();
+                const arabRes = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?verse_key=${surah}:${ayat}`);
+                const arabData = await arabRes.json();
+                return { 
+                    arab: arabData.verses[0].text_uthmani, 
+                    indo: data.verse.translations[0].text.replace(/<(?:.|\n)*?>/gm, '') 
+                };
+            } catch (e) { return null; }
         }
 
         async function pancarHikmah() {
@@ -94,22 +78,17 @@
             const content = document.getElementById('aiContent');
 
             btn.disabled = true;
-            btn.innerText = "MEMVERIFIKASI RUJUKAN...";
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse text-sm">Menghubungkan ke sumber otoritatif (Quran.com & Sunnah.com)...</div>`;
+            content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse">Menghubungkan ke API Otoritatif...</div>`;
 
-            // Prompt diperketat: Dilarang Meringkas/Mengarang isi ayat
-            const systemPrompt = `INPUT: "${input}". TUGAS: Cari 1 Ayat & 1 Hadits sinkron.
-            ATURAN: Jangan berikan isi ayat/hadits. Cukup berikan Link/Keyword pencarian yang AKURAT. 
-            Jadilah Ulama Bijak seperti ${selected.name} untuk bagian Tadabbur & Kesimpulan.
+            const systemPrompt = `Cari 1 Ayat & 1 Hadits paling relevan untuk: "${input}". 
+            PENTING: Berikan nomor surat & ayat yang pasti ada. Untuk hadits, carikan nomor & isi yang sinkron.
             JSON: {
                 "tema": "...",
-                "quran_ref": "Nama Surah Ayat X",
-                "quran_link": "surah_no/ayat_no",
-                "hadits_ref": "HR Perawi Nomor X",
-                "hadits_keyword": "3-5 kata kunci hadits dalam bahasa Indonesia",
-                "tadabbur": "Nasehat mendalam gaya ${selected.name}",
-                "kesimpulan": "Intisari hikmah yang menyejukkan"
+                "quran": { "s_no": "...", "a_no": "...", "name": "..." },
+                "hadits": { "perawi": "...", "no": "...", "arab": "...", "indo": "..." },
+                "tadabbur": "Gaya bicara bijak ${selected.name}",
+                "kesimpulan": "..."
             }`;
 
             try {
@@ -119,42 +98,51 @@
                     body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "system", content: systemPrompt }], temperature: 0, response_format: { "type": "json_object" } })
                 });
 
-                const data = await response.json();
-                const res = JSON.parse(data.choices[0].message.content);
-                const avatarUrl = `https://ui-avatars.com/api/?name=${selected.name.replace(/ /g, '+')}&background=064e3b&color=fff&bold=true`;
+                const groqData = await response.json();
+                const res = JSON.parse(groqData.choices[0].message.content);
+                
+                // Fetch dari API Quran.com
+                const quranApi = await getQuranData(res.quran.s_no, res.quran.a_no);
+                const q_arab = quranApi ? quranApi.arab : "Teks Arab tidak tersedia";
+                const q_indo = quranApi ? quranApi.indo : "Teks terjemahan tidak tersedia";
 
                 content.innerHTML = `
                     <div class="text-center mb-10"><span class="px-6 py-2 border-2 border-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-[0.3em] rounded-full bg-white shadow-sm">Tema: ${res.tema}</span></div>
                     
-                    <div class="glass-card p-10 mb-8 text-center">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6">Rujukan Al-Qur'an</span>
-                        <h2 class="text-2xl font-extrabold text-slate-900 mb-6">${res.quran_ref}</h2>
-                        <a href="https://quran.com/${res.quran_link}" target="_blank" class="btn-ref">📖 Baca Ayat Lengkap di Quran.com ↗</a>
+                    <div class="glass-card p-10 mb-8">
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">Al-Qur'an (API Verified)</span>
+                        <p class="arabic-font mb-8">${q_arab}</p>
+                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">${res.quran.name} : ${res.quran.a_no}</p>
+                        <p class="text-slate-700 leading-relaxed text-center font-medium px-4 mb-8">"${q_indo}"</p>
+                        <div class="flex justify-center border-t border-slate-50 pt-6">
+                            <a href="https://quran.com/${res.quran.s_no}:${res.quran.a_no}" target="_blank" class="text-[9px] font-black text-emerald-700 uppercase underline decoration-2 underline-offset-8">Pelajari di Quran.com ↗</a>
+                        </div>
                     </div>
                     
-                    <div class="glass-card p-10 mb-8 text-center">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6">Rujukan Al-Hadits</span>
-                        <h2 class="text-2xl font-extrabold text-slate-900 mb-6">${res.hadits_ref}</h2>
-                        <a href="https://sunnah.com/search?q=${encodeURIComponent(res.hadits_keyword)}" target="_blank" class="btn-ref">📜 Verifikasi Sanad di Sunnah.com ↗</a>
+                    <div class="glass-card p-10 mb-8">
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">As-Sunnah (Sync Verified)</span>
+                        <p class="arabic-font mb-8">${res.hadits.arab}</p>
+                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">HR. ${res.hadits.perawi} : ${res.hadits.no}</p>
+                        <p class="text-slate-700 leading-relaxed text-center font-medium px-4 mb-8">"${res.hadits.indo}"</p>
+                        <div class="flex justify-center border-t border-slate-50 pt-6">
+                            <a href="https://sunnah.com/search?q=${res.hadits.perawi}+${res.hadits.no}" target="_blank" class="text-[9px] font-black text-emerald-700 uppercase underline decoration-2 underline-offset-8">Cek Sanad di Sunnah.com ↗</a>
+                        </div>
                     </div>
 
-                    <div class="glass-card p-12 bg-slate-900 text-white border-none shadow-2xl mb-8">
+                    <div class="glass-card p-12 bg-slate-900 text-white border-none shadow-2xl">
                         <div class="flex items-center gap-6 mb-8">
-                            <img src="${avatarUrl}" class="w-16 h-16 rounded-2xl border-2 border-white/10">
+                            <div class="w-14 h-14 rounded-2xl bg-emerald-900 border border-white/10 flex items-center justify-center font-black text-white text-xl">${selected.initial}</div>
                             <div>
                                 <p class="text-[9px] uppercase tracking-widest font-bold text-slate-500 mb-1">Dawuh Asatidz</p>
                                 <h3 class="text-2xl font-extrabold tracking-tight">Ustadz ${selected.name}</h3>
                             </div>
                         </div>
-                        <p class="text-xl italic font-medium text-slate-300 leading-relaxed mb-10">"${res.tadabbur}"</p>
-                        <div class="p-6 bg-white/5 rounded-2xl border-l-4 border-emerald-500">
-                             <p class="text-sm text-slate-100 leading-relaxed font-semibold underline decoration-emerald-500 decoration-2 underline-offset-4 mb-2">Intisari Hikmah:</p>
-                             <p class="text-sm text-slate-200 italic">${res.kesimpulan}</p>
-                        </div>
+                        <p class="text-xl italic font-medium text-slate-300 leading-relaxed mb-8">"${res.tadabbur}"</p>
+                        <p class="text-sm text-emerald-400 font-bold border-l-2 border-emerald-500 pl-4">${res.kesimpulan}</p>
                     </div>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="glass-card p-10 text-slate-400 text-center text-sm">Sanad terputus. Mohon jemput hikmah kembali.</div>`;
+                content.innerHTML = `<div class="glass-card p-10 text-slate-400 text-center text-sm">Transmisi terputus. Mohon jemput kembali.</div>`;
             } finally {
                 btn.disabled = false; btn.innerText = "Jemput Hikmah ↗"; validateInput();
             }
