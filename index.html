@@ -13,28 +13,24 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l2.5 7.5L40 10l-7.5 2.5L30 20l-2.5-7.5L20 10l7.5-2.5L30 0z' fill='%2310b981' fill-opacity='0.03'/%3E%3C/svg%3E");
             min-height: 100vh; color: #0f172a;
         }
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.08);
-        }
-        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 1.8; font-size: 2.2rem; color: #064e3b; text-align: center; }
+        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.1); }
+        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2; font-size: 2.4rem; color: #064e3b; text-align: center; }
         .btn-main { background: #0f172a; color: white; padding: 18px 36px; border-radius: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; }
     </style>
 </head>
-<body class="p-6 md:p-12 flex flex-col items-center">
+<body class="p-6 md:p-12 flex flex-col items-center text-slate-900">
 
     <header class="text-center mb-16">
         <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">
             Private Beta v0.1 | API Verified
         </div>
-        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tighter italic mb-1">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold">Created by <b>RRD</b></p>
+        <h1 class="text-4xl font-extrabold tracking-tighter italic mb-1">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
+        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold italic">Created by <b>RRD</b></p>
     </header>
 
-    <div class="w-full max-w-xl glass-card p-10 mb-12">
-        <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan apa yang mengusik ketenangan Bapak..." 
-            class="w-full bg-transparent focus:outline-none text-slate-700 text-xl h-40 resize-none italic placeholder:text-slate-200"></textarea>
+    <div class="w-full max-w-xl glass-card p-10 mb-12 border border-white">
+        <textarea id="userInput" oninput="validateInput()" placeholder="Tumpahkan keluh kesahmu di sini..." 
+            class="w-full bg-transparent focus:outline-none text-xl h-40 resize-none italic placeholder:text-slate-200"></textarea>
         <div class="flex justify-between items-center mt-6 pt-6 border-t border-slate-100">
             <span id="wordCounter" class="text-[9px] font-bold text-slate-400 uppercase">0 / 10 Kata</span>
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-xl">Jemput Hikmah ↗</button>
@@ -47,102 +43,87 @@
 
     <script>
         const GROQ_KEY = "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"; 
-        const asatidz = [
-            { name: "Salim A. Fillah", initial: "SF" },
-            { name: "Adi Hidayat", initial: "AH" }
-        ];
 
         function validateInput() {
-            const words = document.getElementById('userInput').value.trim().split(/\s+/).length;
+            const val = document.getElementById('userInput').value.trim();
+            const words = val === "" ? 0 : val.split(/\s+/).length;
             document.getElementById('wordCounter').innerText = `${words} / 10 Kata`;
             document.getElementById('sendBtn').disabled = words < 10;
         }
 
-        async function getQuranData(surah, ayat) {
+        async function getQuranAPI(s, a) {
             try {
-                const res = await fetch(`https://api.quran.com/api/v4/verses/by_key/${surah}:${ayat}?language=id&words=false&translations=33`);
-                const data = await res.json();
-                const arabRes = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?verse_key=${surah}:${ayat}`);
-                const arabData = await arabRes.json();
-                return { 
-                    arab: arabData.verses[0].text_uthmani, 
-                    indo: data.verse.translations[0].text.replace(/<(?:.|\n)*?>/gm, '') 
-                };
+                const arab = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?verse_key=${s}:${a}`).then(r => r.json());
+                const indo = await fetch(`https://api.quran.com/api/v4/verses/by_key/${s}:${a}?translations=33`).then(r => r.json());
+                return { arab: arab.verses[0].text_uthmani, indo: indo.verse.translations[0].text.replace(/<[^>]*>?/gm, '') };
             } catch (e) { return null; }
         }
 
         async function pancarHikmah() {
             const input = document.getElementById('userInput').value;
-            const selected = asatidz[Math.floor(Math.random() * asatidz.length)];
             const btn = document.getElementById('sendBtn');
             const content = document.getElementById('aiContent');
 
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse">Menghubungkan ke API Otoritatif...</div>`;
+            content.innerHTML = `<div class="glass-card p-20 text-center text-slate-400 italic animate-pulse">Menghubungkan ke API Otoritatif & Memverifikasi Sanad...</div>`;
 
-            const systemPrompt = `Cari 1 Ayat & 1 Hadits paling relevan untuk: "${input}". 
-            PENTING: Berikan nomor surat & ayat yang pasti ada. Untuk hadits, carikan nomor & isi yang sinkron.
+            const systemPrompt = `INPUT: "${input}". 
+            TUGAS: Cari 1 Ayat & 1 Hadits sinkron.
+            PENTING: Jangan tampilkan isi Arab Quran dari memori Anda. Cukup nomor Surah & Ayat.
+            Untuk Hadits, berikan keyword pencarian yang sangat spesifik dalam bahasa Indonesia agar hasil di Sunnah.com akurat.
             JSON: {
                 "tema": "...",
-                "quran": { "s_no": "...", "a_no": "...", "name": "..." },
-                "hadits": { "perawi": "...", "no": "...", "arab": "...", "indo": "..." },
-                "tadabbur": "Gaya bicara bijak ${selected.name}",
+                "quran": { "s": "no_surah", "a": "no_ayat", "name": "..." },
+                "hadits": { "perawi": "...", "keyword": "3-5 kata kunci hadits", "pesan": "..." },
+                "asatidz": "Adi Hidayat/Salim A. Fillah",
+                "tadabbur": "...",
                 "kesimpulan": "..."
             }`;
 
             try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                const groqReq = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "system", content: systemPrompt }], temperature: 0, response_format: { "type": "json_object" } })
                 });
 
-                const groqData = await response.json();
-                const res = JSON.parse(groqData.choices[0].message.content);
-                
-                // Fetch dari API Quran.com
-                const quranApi = await getQuranData(res.quran.s_no, res.quran.a_no);
-                const q_arab = quranApi ? quranApi.arab : "Teks Arab tidak tersedia";
-                const q_indo = quranApi ? quranApi.indo : "Teks terjemahan tidak tersedia";
+                const groqJson = await groqReq.json();
+                const res = JSON.parse(groqJson.choices[0].message.content);
+                const qApi = await getQuranAPI(res.quran.s, res.quran.a);
 
                 content.innerHTML = `
-                    <div class="text-center mb-10"><span class="px-6 py-2 border-2 border-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-[0.3em] rounded-full bg-white shadow-sm">Tema: ${res.tema}</span></div>
+                    <div class="text-center mb-10"><span class="px-6 py-2 border-2 border-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-[0.3em] rounded-full bg-white shadow-sm italic">Tema: ${res.tema}</span></div>
                     
                     <div class="glass-card p-10 mb-8">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">Al-Qur'an (API Verified)</span>
-                        <p class="arabic-font mb-8">${q_arab}</p>
-                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">${res.quran.name} : ${res.quran.a_no}</p>
-                        <p class="text-slate-700 leading-relaxed text-center font-medium px-4 mb-8">"${q_indo}"</p>
-                        <div class="flex justify-center border-t border-slate-50 pt-6">
-                            <a href="https://quran.com/${res.quran.s_no}:${res.quran.a_no}" target="_blank" class="text-[9px] font-black text-emerald-700 uppercase underline decoration-2 underline-offset-8">Pelajari di Quran.com ↗</a>
-                        </div>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center tracking-[0.2em]">Al-Qur'an (API Verified)</span>
+                        <p class="arabic-font mb-8">${qApi ? qApi.arab : "Gagal memuat teks Arab"}</p>
+                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
+                        <p class="text-slate-700 leading-relaxed text-center font-medium px-4 mb-8 italic">"${qApi ? qApi.indo : "Gagal memuat terjemahan"}"</p>
+                        <div class="flex justify-center border-t border-slate-50 pt-8"><a href="https://quran.com/${res.quran.s}:${res.quran.a}" target="_blank" class="text-[9px] font-black text-emerald-800 uppercase underline decoration-2 underline-offset-8">Kroscek di Quran.com ↗</a></div>
                     </div>
                     
                     <div class="glass-card p-10 mb-8">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center">As-Sunnah (Sync Verified)</span>
-                        <p class="arabic-font mb-8">${res.hadits.arab}</p>
-                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">HR. ${res.hadits.perawi} : ${res.hadits.no}</p>
-                        <p class="text-slate-700 leading-relaxed text-center font-medium px-4 mb-8">"${res.hadits.indo}"</p>
-                        <div class="flex justify-center border-t border-slate-50 pt-6">
-                            <a href="https://sunnah.com/search?q=${res.hadits.perawi}+${res.hadits.no}" target="_blank" class="text-[9px] font-black text-emerald-700 uppercase underline decoration-2 underline-offset-8">Cek Sanad di Sunnah.com ↗</a>
-                        </div>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-6 text-center tracking-[0.2em]">As-Sunnah (Reference Only)</span>
+                        <h2 class="text-2xl font-extrabold text-center text-slate-900 mb-2">HR. ${res.hadits.perawi}</h2>
+                        <p class="text-slate-700 leading-relaxed text-center font-medium px-6 my-8 italic">"${res.hadits.pesan}"</p>
+                        <div class="flex justify-center border-t border-slate-50 pt-8"><a href="https://sunnah.com/search?q=${encodeURIComponent(res.hadits.keyword)}" target="_blank" class="text-[9px] font-black text-emerald-800 uppercase underline decoration-2 underline-offset-8">Verifikasi Nomor & Teks di Sunnah.com ↗</a></div>
                     </div>
 
                     <div class="glass-card p-12 bg-slate-900 text-white border-none shadow-2xl">
                         <div class="flex items-center gap-6 mb-8">
-                            <div class="w-14 h-14 rounded-2xl bg-emerald-900 border border-white/10 flex items-center justify-center font-black text-white text-xl">${selected.initial}</div>
+                            <div class="w-14 h-14 rounded-2xl bg-emerald-900 border border-white/10 flex items-center justify-center font-black text-xl">${res.asatidz.split(' ').map(n=>n[0]).join('')}</div>
                             <div>
                                 <p class="text-[9px] uppercase tracking-widest font-bold text-slate-500 mb-1">Dawuh Asatidz</p>
-                                <h3 class="text-2xl font-extrabold tracking-tight">Ustadz ${selected.name}</h3>
+                                <h3 class="text-2xl font-extrabold tracking-tight">Ustadz ${res.asatidz}</h3>
                             </div>
                         </div>
                         <p class="text-xl italic font-medium text-slate-300 leading-relaxed mb-8">"${res.tadabbur}"</p>
-                        <p class="text-sm text-emerald-400 font-bold border-l-2 border-emerald-500 pl-4">${res.kesimpulan}</p>
+                        <div class="p-6 bg-white/5 rounded-2xl border-l-4 border-emerald-500 italic text-sm text-slate-200">${res.kesimpulan}</div>
                     </div>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="glass-card p-10 text-slate-400 text-center text-sm">Transmisi terputus. Mohon jemput kembali.</div>`;
+                content.innerHTML = `<div class="glass-card p-10 text-red-500 text-center text-sm font-bold tracking-widest uppercase">Koneksi Sanad Terputus. Mohon Coba Lagi.</div>`;
             } finally {
                 btn.disabled = false; btn.innerText = "Jemput Hikmah ↗"; validateInput();
             }
