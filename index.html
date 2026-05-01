@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.2.2 | Aesthetic & Logic Fix</title>
+    <title>JedaSanubari v0.2.3 | Quality Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -21,23 +21,18 @@
             border: 1px solid rgba(241, 245, 249, 0.9); 
             overflow: hidden; position: relative;
         }
-        /* Ornamen Islami di Sudut Card */
-        .glass-card::before {
-            content: ""; position: absolute; top: 0; right: 0; width: 120px; height: 120px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0l2 10 10 2-10 2-2 10-2-10-10-2 10-2z' fill='%23d4af37' fill-opacity='0.08'/%3E%3C/svg%3E");
-            z-index: 0;
-        }
         .glass-card::after {
             content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 5px;
             background: linear-gradient(90deg, transparent, var(--gold), transparent);
         }
-        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.6; font-size: 2.5rem; color: var(--emerald); text-align: center; position: relative; z-index: 1; }
-        .btn-main { background: #0f172a; color: white; padding: 22px 44px; border-radius: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); background: #1e293b; }
-        .btn-main:disabled { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
+        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.6; font-size: 2.5rem; color: var(--emerald); text-align: center; }
+        .btn-main { background: #0f172a; color: white; padding: 22px 44px; border-radius: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem; transition: 0.4s; }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .btn-main:disabled { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; transform: none; }
         .gradient-border { border-left: 6px solid var(--gold); background: linear-gradient(to right, rgba(212, 175, 55, 0.07), transparent); padding: 2.5rem; border-radius: 0 2rem 2rem 0; }
+        .yt-btn { background: #ff0000; color: white; display: flex; items-center; justify-content: center; gap: 10px; padding: 18px; border-radius: 20px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.15em; width: 100%; }
         .share-btn { border: 1px solid #f1f5f9; background: #fff; padding: 16px; border-radius: 20px; transition: 0.3s; display: flex; flex-direction: column; items: center; gap: 8px; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #94a3b8; cursor: pointer; }
-        .share-btn:hover { background: #f8fafc; border-color: var(--gold); color: var(--emerald); transform: scale(1.08); }
+        .share-btn:hover { border-color: var(--gold); color: var(--emerald); transform: scale(1.05); }
         .divider-ornament { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 60px 0; opacity: 0.25; }
         .divider-line { height: 1.5px; width: 80px; background: var(--emerald); }
     </style>
@@ -47,7 +42,7 @@
     <div class="fixed bottom-5 right-6 text-[9px] font-black text-slate-300 tracking-[0.5em] uppercase">RRD SYSTEM</div>
 
     <header class="text-center mb-24 max-w-md">
-        <div class="inline-block px-6 py-2 mb-10 border border-slate-100 rounded-full bg-white shadow-sm text-[8px] font-black text-slate-400 uppercase tracking-[0.5em]">v0.2.2 | Final Aesthetic</div>
+        <div class="inline-block px-6 py-2 mb-10 border border-slate-100 rounded-full bg-white shadow-sm text-[8px] font-black text-slate-400 uppercase tracking-[0.5em]">v0.2.3 | Quality Fix</div>
         <h1 class="text-5xl font-extrabold italic text-slate-900 tracking-tighter mb-4">Jeda<span class="text-emerald-700 font-normal">Sanubari</span></h1>
         <p class="mt-8 text-[12px] leading-loose text-slate-400 font-medium italic px-6 uppercase tracking-[0.2em]">Tumpahkan keluhmu, jemput hikmah.</p>
         <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line"></div></div>
@@ -58,8 +53,8 @@
         <div class="flex flex-col items-center pt-12 border-t border-slate-50">
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main mb-14">Jemput Hikmah ↗</button>
             <div class="flex gap-14 justify-center">
-                <div class="text-center"><p class="text-[8px] font-black text-slate-300 mb-2 tracking-widest uppercase">Jemput Hikmah</p><span id="hikmahCount" class="stat-badge">0</span></div>
-                <div class="text-center"><p class="text-[8px] font-black text-slate-300 mb-2 tracking-widest uppercase">Total Share</p><span id="shareCount" class="stat-badge">0</span></div>
+                <div class="text-center"><p class="text-[8px] font-black text-slate-300 mb-2 tracking-widest uppercase">Jemput Hikmah</p><span id="hikmahCount" class="bg-slate-50 border border-slate-100 px-4 py-1.5 rounded-full text-[10px] font-black">0</span></div>
+                <div class="text-center"><p class="text-[8px] font-black text-slate-300 mb-2 tracking-widest uppercase">Total Share</p><span id="shareCount" class="bg-slate-50 border border-slate-100 px-4 py-1.5 rounded-full text-[10px] font-black">0</span></div>
             </div>
         </div>
     </div>
@@ -114,46 +109,55 @@
             document.getElementById('resultArea').classList.remove('hidden');
             content.innerHTML = `<div class="p-20 text-center italic text-slate-300 animate-pulse text-[12px] tracking-[0.5em] uppercase w-full">Mencari Cahaya Hikmah...</div>`;
 
+            const systemPrompt = `
+            ROLE: Pakar Psikologi Islam & Teologi.
+            KONTEKS USER: "${input}". 
+            TUGAS:
+            1. summary: Nasehat (min 4 kalimat). WAJIB awali dengan rujukan kitab shahih (Bukhari/Muslim/Riyadhus Shalihin/Zadul Ma'ad/Ihya). Jelaskan nasehat kitab tsb untuk kasus user.
+            2. quran.alasan: Jelaskan secara LOGIS kenapa ayat tsb relevan dengan masalah user.
+            3. kutipan: Gunakan gaya bahasa asli ustadz terpilih (UAH/UHA/Salim A. Fillah).
+            FORMAT JSON: {summary, quran:{s,a,name,alasan}, asatidz, kutipan, yt_query}`;
+
             try {
                 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         model: "llama-3.3-70b-versatile", 
-                        messages: [{ role: "system", content: "USER: " + input + ". Berikan nasehat islami mendalam dari kitab shahih. Output JSON: {summary, quran:{s,a,name,alasan}, asatidz, kutipan, yt_query}" }], 
-                        temperature: 0.65, response_format: { "type": "json_object" } 
+                        messages: [{ role: "system", content: systemPrompt }], 
+                        temperature: 0.7, response_format: { "type": "json_object" } 
                     })
                 });
 
                 const data = await response.json();
                 const res = JSON.parse(data.choices[0].message.content);
-                const q = await getQuranData(res.quran.s, res.quran.a); // FIX: Menunggu data API Al-Quran
+                const q = await getQuranData(res.quran.s, res.quran.a);
                 
                 globalShareData = { summary: res.summary, dalil: `${res.quran.name} ${res.quran.s}:${res.quran.a}`, arti: q ? q.i : "...", alasan: res.quran.alasan };
 
                 content.innerHTML = `
-                    <div class="glass-card p-16 bg-slate-900 text-white text-center shadow-2xl">
-                        <p class="text-2xl italic font-medium leading-relaxed">"${res.summary}"</p>
+                    <div class="glass-card p-14 bg-slate-900 text-white text-center">
+                        <p class="text-xl md:text-2xl italic font-medium leading-relaxed">"${res.summary}"</p>
                     </div>
 
                     <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700">❈</div><div class="divider-line"></div></div>
 
-                    <div class="glass-card p-16">
-                        <p class="arabic-font mb-14 w-full text-center">${q ? q.a : "..."}</p>
-                        <p class="text-center text-emerald-700 font-black mb-8 uppercase text-[11px] tracking-[0.4em] w-full">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
-                        <p class="text-slate-600 text-center italic px-12 leading-loose w-full text-xl">"${q ? q.i : "..."}"</p>
-                        <div class="mt-14 gradient-border text-[13px] leading-relaxed italic text-slate-500">${res.quran.alasan}</div>
+                    <div class="glass-card p-14">
+                        <p class="arabic-font mb-10 w-full text-center">${q ? q.a : "..."}</p>
+                        <p class="text-center text-emerald-700 font-black mb-6 uppercase text-[10px] tracking-[0.4em] w-full">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
+                        <p class="text-slate-600 text-center italic px-8 leading-loose w-full text-lg">"${q ? q.i : "..."}"</p>
+                        <div class="mt-12 gradient-border text-[12px] leading-relaxed italic text-slate-500">${res.quran.alasan}</div>
                     </div>
 
                     <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700">❈</div><div class="divider-line"></div></div>
 
-                    <div class="glass-card p-20 bg-white text-center">
-                        <h3 class="font-black uppercase text-[9px] text-slate-300 mb-12 tracking-[0.5em] text-center w-full">Tausiyah Ustadz ${res.asatidz}</h3>
-                        <p class="text-3xl italic font-serif text-slate-800 mb-16 leading-tight">"${res.kutipan}"</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}" target="_blank" class="yt-btn mb-14 shadow-xl shadow-red-100">Tonton Video Tausiyah ↗</a>
-                        <div class="pt-14 border-t border-slate-50">
-                            <p class="text-[9px] font-black uppercase text-slate-300 tracking-[0.5em] mb-10">Sebarkan Kebaikan</p>
-                            <div class="grid grid-cols-3 gap-6">
+                    <div class="glass-card p-14 bg-white text-center">
+                        <h3 class="font-black uppercase text-[8px] text-slate-300 mb-8 tracking-[0.5em] text-center w-full">Tausiyah Ustadz ${res.asatidz}</h3>
+                        <p class="text-2xl italic font-serif text-slate-800 mb-12 leading-relaxed">"${res.kutipan}"</p>
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}" target="_blank" class="yt-btn mb-12 shadow-xl shadow-red-50">Tonton Video Tausiyah ↗</a>
+                        <div class="pt-12 border-t border-slate-50">
+                            <p class="text-[8px] font-black uppercase text-slate-300 tracking-[0.5em] mb-8">Sebarkan Kebaikan</p>
+                            <div class="grid grid-cols-3 gap-4">
                                 <button onclick="shareTo('wa')" class="share-btn">WA</button>
                                 <button onclick="shareTo('ig')" class="share-btn">IG</button>
                                 <button onclick="shareTo('threads')" class="share-btn">Threads</button>
