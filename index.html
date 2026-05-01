@@ -11,7 +11,6 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #f8fafc;
-            /* Pattern Islami yang lebih tegas tapi soft */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l5 25 25 5-25 5-5 25-5-25-25-5 25-5z' fill='%3C064e3b' fill-opacity='0.03'/%3E%3C/svg%3E");
             min-height: 100vh; color: #0f172a; 
         }
@@ -22,7 +21,6 @@
             border: 1px solid #f1f5f9; 
             overflow: hidden; position: relative;
         }
-        /* Ornamen Garis Emas Islami */
         .glass-card::after {
             content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, transparent, var(--gold), transparent);
@@ -41,7 +39,7 @@
     <div class="watermark">Created by RRD</div>
 
     <header class="text-center mb-16">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Final Master</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Master Stable</div>
         <h1 class="text-4xl font-extrabold italic text-slate-900 tracking-tighter">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
         <div class="flex items-center justify-center gap-2 mt-4 opacity-30">
             <div class="w-8 h-[1px] bg-emerald-600"></div>
@@ -84,22 +82,23 @@
             
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menghubungkan Sanubari...</div>`;
+            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menyambungkan Sanubari...</div>`;
 
-            // FIX: Instruksi summary diperketat agar narasi mengalir utuh
-            const systemPrompt = `USER INPUT: "${input}". 
-            TUGAS: Berikan nasihat islami.
-            PERSONA:
-            1. "summary": WAJIB diawali frasa "Terinspirasi dari pemikiran [Ulama] dalam kitab [Kitab]..." KEMUDIAN sambungkan langsung dengan narasi nasehat mendalam yang relevan. Jangan biarkan menggantung.
-            2. "asatidz": Pilih (Adi Hidayat, Hanan Attaki, Salim A. Fillah).
-            3. "kutipan": Gunakan GAYA BAHASA ASLI ustadz tersebut (UAH: etimologi, UHA: shifting, USF: puitis-sejarah).
+            const systemPrompt = `KONTEKS USER: "${input}". 
+            TUGAS: Berikan respon yang SANGAT DINAMIS sesuai keluhan user.
+            
+            1. "summary": WAJIB dimulai dengan "Terinspirasi dari pemikiran [Ulama] dalam kitab [Kitab]..." lalu sambungkan dengan nasehat minimal 3 kalimat yang MENJAWAB MASALAH user secara spesifik.
+            2. "quran": Cari ayat yang benar-benar relevan dengan emosi user.
+            3. "sirah": Ceritakan kisah tokoh yang menghadapi masalah SERUPA dengan user.
+            4. "yt_query": WAJIB buat kueri unik berdasarkan curhatan (Contoh: "solusi futur dalam ibadah", "cara ikhlas dikhianati teman", "tips sabar menghadapi cicilan"). JANGAN gunakan kueri umum.
+            
             WAJIB FORMAT JSON: {
-                "summary": "Full narasi (minimal 3 kalimat) diawali rujukan kitab",
+                "summary": "Full narasi (min 3 kalimat)",
                 "quran": { "s": "no", "a": "no", "name": "Surah", "alasan": "..." },
                 "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "deep_query": "..." },
-                "asatidz": "...",
-                "kutipan": "...",
-                "yt_query": "..."
+                "asatidz": "Adi Hidayat/Hanan Attaki/Salim A. Fillah",
+                "kutipan": "Gunakan gaya bahasa asli ustadz terpilih (UAH: etimologi/struktur, UHA: shifting/gaul-langit, USF: sastra/sejarah)",
+                "yt_query": "Kueri YouTube Unik & Spesifik"
             }`;
 
             try {
@@ -109,7 +108,7 @@
                     body: JSON.stringify({ 
                         model: "llama-3.3-70b-versatile", 
                         messages: [{ role: "system", content: systemPrompt }], 
-                        temperature: 0.3, 
+                        temperature: 0.6, // Dinaikkan sedikit agar lebih kreatif/dinamis
                         response_format: { "type": "json_object" } 
                     })
                 });
@@ -117,6 +116,8 @@
                 const data = await response.json();
                 const res = JSON.parse(data.choices[0].message.content);
                 const q = await getQuranData(res.quran.s, res.quran.a);
+                
+                // Link YouTube yang kini lebih dinamis
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}`;
 
                 content.innerHTML = `
@@ -148,7 +149,7 @@
                     </div>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">Mohon maaf, sanad sedang terganggu. Klik jemput lagi ya, Pak.</div>`;
+                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">Sanad sedang sibuk, Pak. Mohon jemput lagi hikmahnya.</div>`;
             } finally {
                 btn.disabled = false;
             }
@@ -156,4 +157,3 @@
     </script>
 </body>
 </html>
-
