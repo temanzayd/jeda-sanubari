@@ -4,39 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JedaSanubari v0.1 Beta</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap](https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap)" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; min-height: 100vh; color: #0f172a; }
-        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 2.5rem; box-shadow: 0 30px 60px -12px rgba(5, 150, 105, 0.1); position: relative; border: 1px solid rgba(255,255,255,0.8); overflow: hidden; }
-        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.2; font-size: 2.2rem; color: #064e3b; text-align: center; width: 100%; }
-        .btn-main { background: #0f172a; color: white; padding: 20px 40px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.7rem; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; min-height: 100vh; }
+        .glass-card { background: white; border-radius: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; overflow: hidden; }
+        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.2; font-size: 2.2rem; color: #064e3b; text-align: center; }
+        .btn-main { background: #0f172a; color: white; padding: 18px 36px; border-radius: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
 
-    <header class="text-center mb-16 w-full">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">Beta v0.1 | Precise Gemini Active</div>
-        <h1 class="text-4xl font-extrabold tracking-tighter italic mb-1 text-center w-full">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.6em] text-slate-400 font-bold italic mt-2 text-center w-full">Created by <b>RRD</b></p>
+    <header class="text-center mb-16">
+        <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
+        <p class="text-[9px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2">Created by <b>RRD</b></p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12">
-        <textarea id="userInput" oninput="validate()" placeholder="Tumpahkan keluh kesah Anda (Bapak, Ibu, Pemuda)..." class="w-full bg-transparent focus:outline-none text-xl h-44 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
+        <textarea id="userInput" oninput="validate()" placeholder="Apa yang mengusik ketenangan batin Anda? (min. 10 kata)" class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
         <div class="flex justify-center pt-8 border-t border-slate-50">
-            <button onclick="pancar()" id="sendBtn" disabled class="btn-main shadow-2xl">Jemput Hikmah ↗</button>
+            <button onclick="pancar()" id="sendBtn" disabled class="btn-main">Jemput Hikmah ↗</button>
         </div>
     </div>
 
-    <div id="resultArea" class="w-full max-w-xl hidden space-y-10 pb-32">
+    <div id="resultArea" class="w-full max-w-xl hidden space-y-8 pb-32">
         <div id="aiContent"></div>
     </div>
 
     <script>
         function validate() {
             const val = document.getElementById('userInput').value.trim();
-            const words = val === "" ? 0 : val.split(/\s+/).length;
-            document.getElementById('sendBtn').disabled = words < 10;
+            document.getElementById('sendBtn').disabled = val.split(/\s+/).length < 10;
         }
 
         async function getQuran(s, a) {
@@ -49,11 +47,9 @@
 
         async function pancar() {
             const input = document.getElementById('userInput').value;
-            const btn = document.getElementById('sendBtn');
             const content = document.getElementById('aiContent');
-            btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-24 text-center text-slate-400 italic animate-pulse text-[10px] uppercase tracking-[0.5em] w-full">Memproses Sanad via Server...</div>`;
+            content.innerHTML = `<p class="text-center italic text-slate-400 animate-pulse uppercase text-[10px] tracking-widest">Menyusun Sanad via Gemini...</p>`;
 
             try {
                 const response = await fetch('/api/pancar', {
@@ -62,34 +58,28 @@
                     body: JSON.stringify({ input })
                 });
                 
-                if (!response.ok) throw new Error('API Error');
-                
                 const res = await response.json();
                 const q = await getQuran(res.quran.s, res.quran.a);
-                const ytLink = `https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}`;
 
                 content.innerHTML = `
                     <div class="glass-card p-10 bg-slate-900 text-white text-center">
-                        <p class="text-[9px] uppercase tracking-[0.5em] text-emerald-400 mb-6 italic text-center w-full">Muhasabah</p>
-                        <p class="text-xl italic font-medium leading-relaxed">"${res.summary}"</p>
+                        <p class="text-xl italic font-medium">"${res.summary}"</p>
                     </div>
-                    <div class="glass-card p-10 border-white">
-                        <p class="arabic-font mb-10 w-full text-center">${q.a}</p>
-                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] w-full text-center">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
-                        <p class="text-slate-700 leading-relaxed text-center italic mb-10 px-4 text-lg w-full text-center">"${q.i}"</p>
-                        <div class="bg-emerald-50/50 p-8 rounded-3xl border-l-4 border-emerald-500 text-left mb-8 text-sm italic text-slate-600 leading-relaxed">${res.quran.alasan}</div>
-                        <a href="[https://quran.com/$](https://quran.com/$){res.quran.s}:${res.quran.a}?locale=id" target="_blank" class="block w-full text-center bg-slate-900 text-white py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl">Baca Tafsir ↗</a>
+                    <div class="glass-card p-10 border-slate-100">
+                        <p class="arabic-font mb-10">${q.a}</p>
+                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px]">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
+                        <p class="text-slate-700 text-center italic px-4">"${q.i}"</p>
+                        <div class="mt-8 bg-emerald-50 p-6 rounded-2xl text-xs italic text-slate-600 border-l-4 border-emerald-500">${res.quran.alasan}</div>
                     </div>
-                    <div class="glass-card p-12 bg-white shadow-xl">
-                        <h3 class="text-2xl font-extrabold italic uppercase text-slate-900 mb-6 text-left">Ustadz ${res.asatidz}</h3>
-                        <p class="text-2xl italic font-medium text-slate-600 leading-relaxed mb-10 text-left font-serif">"${res.kutipan}"</p>
-                        <a href="${ytLink}" target="_blank" class="block w-full text-center bg-red-600 text-white py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg">▶ Simak di YouTube</a>
+                    <div class="glass-card p-10 bg-white">
+                        <h3 class="font-black uppercase text-[10px] text-slate-400 mb-4">Dawuh Ustadz ${res.asatidz}</h3>
+                        <p class="text-xl italic font-serif text-slate-700">"${res.kutipan}"</p>
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}" target="_blank" class="mt-8 block text-center bg-red-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest">Simak di YouTube</a>
                     </div>
-                    <footer class="text-center pt-20 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic w-full text-center">Created by <b>RRD</b></footer>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="glass-card p-10 text-red-500 text-center text-[10px] font-bold uppercase tracking-widest w-full">Kendala Teknis. Periksa API Key Vercel.</div>`;
-            } finally { btn.disabled = false; validate(); }
+                content.innerHTML = `<p class="text-red-500 text-center font-bold uppercase text-[10px]">Gagal memuat. Periksa folder /api di Vercel.</p>`;
+            }
         }
     </script>
 </body>
