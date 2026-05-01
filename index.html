@@ -3,27 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 Beta</title>
+    <title>JedaSanubari v0.1 Platinum</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; min-height: 100vh; color: #0f172a; }
-        .glass-card { background: white; border-radius: 2.5rem; box-shadow: 0 30px 60px -12px rgba(5, 150, 105, 0.1); border: 1px solid #f1f5f9; overflow: hidden; }
-        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.2; font-size: 2.4rem; color: #064e3b; text-align: center; }
-        .btn-main { background: #0f172a; color: white; padding: 20px 40px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.7rem; transition: 0.3s; }
-        .btn-main:disabled { background: #e2e8f0; color: #94a3b8; }
+        .glass-card { background: white; border-radius: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; overflow: hidden; }
+        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.2; font-size: 2.2rem; color: #064e3b; text-align: center; }
+        .btn-main { background: #0f172a; color: white; padding: 18px 36px; border-radius: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">Beta v0.1 | Client-Side Engine</div>
-        <h1 class="text-4xl font-extrabold tracking-tighter italic mb-1">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.6em] text-slate-400 font-bold italic mt-2">Created by <b>RRD</b></p>
+        <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
+        <p class="text-[9px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2">v0.1 Platinum Edition | <b>RRD</b></p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12">
-        <textarea id="userInput" oninput="validate()" placeholder="Tumpahkan keluh kesah Anda di sini..." class="w-full bg-transparent focus:outline-none text-xl h-44 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
+        <textarea id="userInput" oninput="validate()" placeholder="Tumpahkan keluh kesah Anda (min. 10 kata)..." class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
         <div class="flex justify-center pt-8 border-t border-slate-50">
             <button onclick="pancar()" id="sendBtn" disabled class="btn-main shadow-2xl">Jemput Hikmah ↗</button>
         </div>
@@ -34,11 +32,12 @@
     </div>
 
     <script>
+        // KUNCI UTAMA: Kita panggil langsung di sini untuk memastikan tidak ada hambatan di serverless Vercel
         const API_KEY = "AIzaSyDo2YUNhjKT2ZtyjYXEjPu0JLN1QIy-4FE"; 
 
         function validate() {
-            const words = document.getElementById('userInput').value.trim().split(/\s+/).length;
-            document.getElementById('sendBtn').disabled = words < 10;
+            const val = document.getElementById('userInput').value.trim();
+            document.getElementById('sendBtn').disabled = val.split(/\s+/).length < 10;
         }
 
         async function getQuran(s, a) {
@@ -53,10 +52,10 @@
             const input = document.getElementById('userInput').value;
             const content = document.getElementById('aiContent');
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-24 text-center text-slate-400 italic animate-pulse uppercase text-[10px] tracking-widest w-full">Menenangkan Batin...</div>`;
+            content.innerHTML = `<p class="text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase">Menenangkan Sanubari via Gemini...</p>`;
 
-            const prompt = {
-                contents: [{ parts: [{ text: `INPUT: "${input}". TUGAS: Cari 1 Ayat & 1 Kisah Sirah. JSON: {"summary":"...","quran":{"s":"no","a":"no","name":"...","alasan":"..."},"sirah":{"tokoh":"...","judul":"...","narasi":"...","keyword":"..."},"asatidz":"...","kutipan":"...","yt_query":"..."}` }] }],
+            const payload = {
+                contents: [{ parts: [{ text: `INPUT: "${input}". BERIKAN NASIHAT ISLAMI. OUTPUT JSON: {"summary":"...","quran":{"s":"no","a":"no","name":"...","alasan":"..."},"sirah":{"tokoh":"...","judul":"...","narasi":"...","keyword":"..."},"asatidz":"...","kutipan":"...","yt_query":"..."}` }] }],
                 generationConfig: { response_mime_type: "application/json" }
             };
 
@@ -64,35 +63,39 @@
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(prompt)
+                    body: JSON.stringify(payload)
                 });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(`Google API Error: ${errData.error.message}`);
+                }
 
                 const data = await response.json();
                 const res = JSON.parse(data.candidates[0].content.parts[0].text);
                 const q = await getQuran(res.quran.s, res.quran.a);
 
                 content.innerHTML = `
-                    <div class="glass-card p-10 bg-slate-900 text-white text-center shadow-2xl">
+                    <div class="glass-card p-10 bg-slate-900 text-white text-center">
                         <p class="text-xl italic font-medium">"${res.summary}"</p>
                     </div>
-                    <div class="glass-card p-10 border-white">
-                        <p class="arabic-font mb-10 text-center w-full">${q.a}</p>
-                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] w-full">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
-                        <p class="text-slate-700 text-center italic mb-10 px-4 text-lg w-full">"${q.i}"</p>
-                        <div class="bg-emerald-50 p-8 rounded-3xl border-l-4 border-emerald-500 text-left mb-8 text-sm italic text-slate-600">${res.quran.alasan}</div>
+                    <div class="glass-card p-10 border-slate-100">
+                        <p class="arabic-font mb-10">${q ? q.a : "..."}</p>
+                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px]">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
+                        <p class="text-slate-700 text-center italic px-4">"${q ? q.i : "..."}"</p>
+                        <div class="mt-8 bg-emerald-50 p-6 rounded-2xl text-xs italic text-slate-600 border-l-4 border-emerald-500">${res.quran.alasan}</div>
                     </div>
-                    <div class="glass-card p-12 bg-white shadow-xl">
-                        <h3 class="text-2xl font-black italic text-slate-900 mb-6">Ustadz ${res.asatidz}</h3>
-                        <p class="text-2xl italic font-serif text-slate-600 mb-10">"${res.kutipan}"</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}" target="_blank" class="block w-full text-center bg-red-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest">Tonton di YouTube</a>
+                    <div class="glass-card p-10 bg-white shadow-xl">
+                        <h3 class="font-black uppercase text-[10px] text-slate-400 mb-4">Dawuh Ustadz ${res.asatidz}</h3>
+                        <p class="text-xl italic font-serif text-slate-700 mb-8">"${res.kutipan}"</p>
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}" target="_blank" class="block text-center bg-red-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg">Simak di YouTube</a>
                     </div>
-                    <footer class="text-center pt-20 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic">Created by <b>RRD</b></footer>
                 `;
             } catch (err) {
-                // PRINT ERROR SEBENARNYA DI LAYAR
-                content.innerHTML = `<div class="p-10 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl">
-                    ERROR LOG: ${err.message}<br><br>
-                    Pastikan API Key Bapak benar dan tidak ada blokir jaringan.
+                // INI AKAN MENCETAK ERROR SEBENARNYA DI LAYAR JIKA GAGAL
+                content.innerHTML = `<div class="p-8 bg-red-50 border border-red-200 rounded-3xl">
+                    <p class="text-red-800 font-bold uppercase text-[10px] mb-2">Diagnostic Trace:</p>
+                    <pre class="text-[9px] text-red-600 font-mono whitespace-pre-wrap">${err.message}</pre>
                 </div>`;
             }
         }
