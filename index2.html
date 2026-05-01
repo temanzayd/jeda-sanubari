@@ -41,7 +41,7 @@
             <span class="text-[9px] font-black text-emerald-800 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-md">Muara Hati</span>
             <span id="wordCounter" class="text-[9px] font-bold text-slate-400">0 / 10 Kata</span>
         </div>
-        <textarea id="userInput" oninput="validateInput()" placeholder="Sampaikan apa yang mengusik ketenangan batin Anda..." 
+        <textarea id="userInput" oninput="validateInput()" placeholder="Sampaikan apa yang sedang mengusik ketenangan batin Anda..." 
             class="w-full bg-transparent focus:outline-none text-xl h-44 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
         <div class="flex justify-center pt-8 border-t border-slate-50">
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-2xl">Jemput Hikmah ↗</button>
@@ -53,7 +53,6 @@
     </div>
 
     <script>
-        // Gunakan Groq Key Bapak yang terbukti stabil secara pemanggilan HTTP
         const API_KEY = "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"; 
 
         function validateInput() {
@@ -80,16 +79,14 @@
             document.getElementById('resultArea').classList.remove('hidden');
             content.innerHTML = `<div class="glass-card p-24 text-center text-slate-400 italic animate-pulse tracking-widest uppercase text-[10px]">Menyusun Sanad Hikmah...</div>`;
 
-            // PROMPT DENGAN VERIFIKASI KONTEKSTUAL KETAT
-            const systemPrompt = `USER INPUT: "${input}". 
-            TUGAS: Cari 1 Ayat Quran & 1 Kisah Sirah. 
-            SYARAT MUTLAK: Isi ayat HARUS relevan dengan emosi user. JANGAN berikan ayat geologi/alam jika user curhat masalah hati.
+            const systemPrompt = `USER INPUT: "${input}". TUGAS: Cari 1 Ayat Quran & 1 Kisah Sirah. 
+            DILARANG: Memberikan ayat geologi/alam untuk masalah hati. 
             JSON: {
-                "summary": "Nasehat syahdu pembuka (Inklusif)",
-                "quran": { "s": "no", "a": "no", "name": "...", "alasan": "Mengapa ayat ini relevan?" },
+                "summary": "Nasehat syahdu pembuka yang inklusif",
+                "quran": { "s": "no", "a": "no", "name": "...", "alasan": "Kaitan ayat ini dengan curhatan user" },
                 "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "keyword": "Keyword Google" },
                 "asatidz": "Adi Hidayat/Salim A. Fillah/Hanan Attaki",
-                "kutipan": "Kutipan inspiratif",
+                "kutipan": "Kutipan inspiratif asatidz",
                 "yt_query": "Kueri YouTube"
             }`;
 
