@@ -3,82 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 Beta</title>
+    <title>JedaSanubari Debug Mode</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; min-height: 100vh; }
-        .glass-card { background: white; border-radius: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; overflow: hidden; }
-        .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.2; font-size: 2.2rem; color: #064e3b; text-align: center; }
-        .btn-main { background: #0f172a; color: white; padding: 18px 36px; border-radius: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
-<body class="p-6 md:p-12 flex flex-col items-center">
+<body class="p-6 md:p-12 bg-slate-50 flex flex-col items-center font-['Plus+Jakarta+Sans']">
 
-    <header class="text-center mb-16">
-        <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[9px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2">Created by <b>RRD</b></p>
+    <header class="text-center mb-10">
+        <h1 class="text-2xl font-black italic">Jeda<span class="text-emerald-600">Sanubari</span></h1>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Debug Mode Active</p>
     </header>
 
-    <div class="w-full max-w-xl glass-card p-10 mb-12">
-        <textarea id="userInput" oninput="validate()" placeholder="Apa yang mengusik ketenangan batin Anda? (min. 10 kata)" class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
-        <div class="flex justify-center pt-8 border-t border-slate-50">
-            <button onclick="pancar()" id="sendBtn" disabled class="btn-main">Jemput Hikmah ↗</button>
+    <div class="w-full max-w-xl bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+        <textarea id="userInput" placeholder="Tulis sesuatu untuk tes debug..." class="w-full h-32 bg-transparent focus:outline-none text-lg resize-none"></textarea>
+        <button onclick="pancarDebug()" id="sendBtn" class="w-full mt-6 bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest">Run Debug Trace ↗</button>
+    </div>
+
+    <div id="debugArea" class="w-full max-w-xl mt-8 hidden">
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+            <h3 class="text-red-800 font-black text-xs uppercase mb-4 tracking-tighter">Diagnostic Trace:</h3>
+            <pre id="errorMessage" class="text-[10px] text-red-600 font-mono whitespace-pre-wrap leading-relaxed"></pre>
         </div>
     </div>
 
-    <div id="resultArea" class="w-full max-w-xl hidden space-y-8 pb-32">
-        <div id="aiContent"></div>
+    <div id="resultArea" class="w-full max-w-xl mt-8 hidden">
+        <div id="successContent" class="bg-emerald-50 text-emerald-800 p-6 rounded-2xl text-xs font-mono"></div>
     </div>
 
     <script>
-        function validate() {
-            const val = document.getElementById('userInput').value.trim();
-            document.getElementById('sendBtn').disabled = val.split(/\s+/).length < 10;
-        }
-
-        async function getQuran(s, a) {
-            try {
-                const arab = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?verse_key=${s}:${a}`).then(r => r.json());
-                const indo = await fetch(`https://api.quran.com/api/v4/verses/by_key/${s}:${a}?translations=33`).then(r => r.json());
-                return { a: arab.verses[0].text_uthmani, i: indo.verse.translations[0].text.replace(/<[^>]*>?/gm, '') };
-            } catch (e) { return null; }
-        }
-
-        async function pancar() {
+        async function pancarDebug() {
             const input = document.getElementById('userInput').value;
-            const content = document.getElementById('aiContent');
-            document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<p class="text-center italic text-slate-400 animate-pulse uppercase text-[10px] tracking-widest">Menyusun Sanad via Gemini...</p>`;
+            const errorArea = document.getElementById('debugArea');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultArea = document.getElementById('resultArea');
+            const successContent = document.getElementById('successContent');
 
+            // Reset view
+            errorArea.classList.add('hidden');
+            resultArea.classList.add('hidden');
+            
             try {
+                console.log("Starting fetch to /api/pancar...");
+                
                 const response = await fetch('/api/pancar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ input })
                 });
-                
-                const res = await response.json();
-                const q = await getQuran(res.quran.s, res.quran.a);
 
-                content.innerHTML = `
-                    <div class="glass-card p-10 bg-slate-900 text-white text-center">
-                        <p class="text-xl italic font-medium">"${res.summary}"</p>
-                    </div>
-                    <div class="glass-card p-10 border-slate-100">
-                        <p class="arabic-font mb-10">${q.a}</p>
-                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px]">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
-                        <p class="text-slate-700 text-center italic px-4">"${q.i}"</p>
-                        <div class="mt-8 bg-emerald-50 p-6 rounded-2xl text-xs italic text-slate-600 border-l-4 border-emerald-500">${res.quran.alasan}</div>
-                    </div>
-                    <div class="glass-card p-10 bg-white">
-                        <h3 class="font-black uppercase text-[10px] text-slate-400 mb-4">Dawuh Ustadz ${res.asatidz}</h3>
-                        <p class="text-xl italic font-serif text-slate-700">"${res.kutipan}"</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}" target="_blank" class="mt-8 block text-center bg-red-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest">Simak di YouTube</a>
-                    </div>
-                `;
+                console.log("Status Response:", response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ERROR ${response.status}\nURL: ${response.url}\nResponse: ${errorText}`);
+                }
+
+                const data = await response.json();
+                resultArea.classList.remove('hidden');
+                successContent.innerText = "SUCCESS! Data received:\n" + JSON.stringify(data, null, 2);
+
             } catch (err) {
-                content.innerHTML = `<p class="text-red-500 text-center font-bold uppercase text-[10px]">Gagal memuat. Periksa folder /api di Vercel.</p>`;
+                console.error("Debug Trace Caught:", err);
+                errorArea.classList.remove('hidden');
+                
+                // Print error super jelas di layar
+                errorMessage.innerText = `[LOG TIME: ${new Date().toLocaleTimeString()}]\n` +
+                                         `ERROR TYPE: ${err.name}\n` +
+                                         `MESSAGE: ${err.message}\n\n` +
+                                         `POSSIBLE CAUSES:\n` +
+                                         `1. File /api/pancar.js belum di-deploy ke Vercel.\n` +
+                                         `2. Terjadi CORS Block (Jika Bapak buka via file:// bukan via domain).\n` +
+                                         `3. API Key Gemini salah atau expired.`;
             }
         }
     </script>
