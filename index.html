@@ -17,8 +17,8 @@
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[9px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2">v0.1 Platinum | Stable v1 Engine</p>
+        <h1 class="text-3xl font-extrabold italic text-slate-900 text-center w-full">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
+        <p class="text-[9px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2 text-center w-full">v0.1 Platinum | Compatibility Mode</p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12">
@@ -52,13 +52,17 @@
             const input = document.getElementById('userInput').value;
             const content = document.getElementById('aiContent');
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase">Sinkronisasi Hikmah via Stable Engine...</div>`;
+            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] uppercase tracking-widest text-center w-full">Sinkronisasi Hikmah...</div>`;
 
-            // MENGGUNAKAN VERSI v1 (STABLE) BUKAN v1beta
-            const URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // MENGGUNAKAN MODEL gemini-1.5-flash-latest (Lebih kompatibel di v1beta)
+            const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
 
             const payload = {
-                contents: [{ parts: [{ text: `INPUT: "${input}". BERIKAN NASIHAT ISLAMI. OUTPUT JSON: {"summary":"...","quran":{"s":"no","a":"no","name":"...","alasan":"..."},"sirah":{"tokoh":"...","judul":"...","narasi":"...","keyword":"..."},"asatidz":"...","kutipan":"...","yt_query":"..."}` }] }]
+                contents: [{ parts: [{ text: `INPUT: "${input}". BERIKAN NASIHAT ISLAMI. OUTPUT JSON: {"summary":"...","quran":{"s":"no","a":"no","name":"...","alasan":"..."},"sirah":{"tokoh":"...","judul":"...","narasi":"...","keyword":"..."},"asatidz":"...","kutipan":"...","yt_query":"..."}` }] }],
+                generationConfig: { 
+                    response_mime_type: "application/json",
+                    temperature: 0.7
+                }
             };
 
             try {
@@ -68,16 +72,14 @@
                     body: JSON.stringify(payload)
                 });
 
+                const data = await response.json();
+
                 if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(`Google API Error: ${errData.error.message}`);
+                    throw new Error(data.error ? data.error.message : 'Unknown API Error');
                 }
 
-                const data = await response.json();
-                // Parsing response Gemini v1 sedikit berbeda
-                const rawText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
+                const rawText = data.candidates[0].content.parts[0].text.trim();
                 const res = JSON.parse(rawText);
-                
                 const q = await getQuran(res.quran.s, res.quran.a);
 
                 content.innerHTML = `
@@ -85,21 +87,21 @@
                         <p class="text-xl italic font-medium leading-relaxed">"${res.summary}"</p>
                     </div>
                     <div class="glass-card p-10 border-slate-100">
-                        <p class="arabic-font mb-10">${q ? q.a : "..."}</p>
-                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
-                        <p class="text-slate-700 text-center italic px-4 leading-relaxed">"${q ? q.i : "..."}"</p>
+                        <p class="arabic-font mb-10 text-center w-full">${q ? q.a : "..."}</p>
+                        <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest text-center w-full">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
+                        <p class="text-slate-700 text-center italic px-4 leading-relaxed text-center w-full">"${q ? q.i : "..."}"</p>
                         <div class="mt-8 bg-emerald-50 p-6 rounded-2xl text-xs italic text-slate-600 border-l-4 border-emerald-500">${res.quran.alasan}</div>
                     </div>
                     <div class="glass-card p-10 bg-white">
-                        <h3 class="font-black uppercase text-[10px] text-slate-400 mb-4 tracking-widest">Dawuh Ustadz ${res.asatidz}</h3>
-                        <p class="text-xl italic font-serif text-slate-700 mb-8 leading-relaxed">"${res.kutipan}"</p>
+                        <h3 class="font-black uppercase text-[10px] text-slate-400 mb-4 tracking-widest text-center w-full">Dawuh Ustadz ${res.asatidz}</h3>
+                        <p class="text-xl italic font-serif text-slate-700 mb-8 leading-relaxed text-center w-full">"${res.kutipan}"</p>
                         <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}" target="_blank" class="block text-center bg-red-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg">Simak di YouTube</a>
                     </div>
-                    <footer class="text-center pt-10 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic">Created by <b>RRD</b></footer>
+                    <footer class="text-center pt-10 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic text-center w-full">Created by <b>RRD</b></footer>
                 `;
             } catch (err) {
                 content.innerHTML = `<div class="p-8 bg-red-50 border border-red-200 rounded-3xl">
-                    <p class="text-red-800 font-bold uppercase text-[10px] mb-2">Diagnostic Trace (v1):</p>
+                    <p class="text-red-800 font-bold uppercase text-[10px] mb-2 text-center w-full">Diagnostic Trace (Fix):</p>
                     <pre class="text-[9px] text-red-600 font-mono whitespace-pre-wrap">${err.message}</pre>
                 </div>`;
             }
