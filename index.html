@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 | Master Stable</title>
+    <title>JedaSanubari v0.2 | Beta Universal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -31,7 +31,10 @@
         .btn-main:disabled { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; }
         .gradient-border { border-left: 4px solid var(--gold); background: rgba(212, 175, 55, 0.05); padding: 1.5rem; border-radius: 0 1rem 1rem 0; }
         .yt-btn { background: #ff0000; color: white; display: flex; items-center; justify-content: center; gap: 10px; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; transition: 0.3s; }
+        .share-btn { border: 1px solid #e2e8f0; padding: 12px; border-radius: 15px; transition: 0.2s; display: flex; flex-direction: column; items: center; gap: 6px; font-size: 8px; font-weight: 800; text-transform: uppercase; color: #64748b; width: 100%; }
+        .share-btn:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
         .watermark { position: fixed; bottom: 15px; right: 20px; font-size: 8px; font-weight: 900; color: #94a3b8; letter-spacing: 0.4em; text-transform: uppercase; z-index: 100; opacity: 0.6; }
+        .stat-badge { background: #f1f5f9; padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 900; color: #475569; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
@@ -39,7 +42,7 @@
     <div class="watermark">Created by RRD</div>
 
     <header class="text-center mb-16 max-w-md">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Master Stable</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.2 | Beta Universal</div>
         <h1 class="text-4xl font-extrabold italic text-slate-900 tracking-tighter">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
         
         <p class="mt-6 text-[11px] leading-relaxed text-slate-500 font-medium italic px-4 uppercase tracking-[0.1em]">
@@ -61,7 +64,7 @@
         <div class="flex flex-col items-center pt-8 border-t border-slate-100">
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main mb-8">Jemput Hikmah ↗</button>
             
-            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100 mb-8">
                 <p class="text-[9px] uppercase tracking-[0.2em] font-black text-slate-400 mb-2">Disclaimer:</p>
                 <p class="text-[10px] leading-relaxed text-slate-500 italic">
                     Ini semua full bikin pakai AI, dengan prompt-prompt yang tak terlalu teknis, maklum orang mager. 
@@ -69,6 +72,17 @@
                     Jadikan ini bahan "curhat tipis-tipis" aja ya warga 😁. Paling tidak jadi baca quote-quote bijak, 
                     baca ayat Al-Qur'an, atau malah jadi nontonin video tausiyah ustadz.
                 </p>
+            </div>
+
+            <div class="flex gap-8 border-t border-slate-50 pt-4 w-full justify-center opacity-60">
+                <div class="text-center">
+                    <p class="text-[7px] font-black uppercase text-slate-400 mb-1">Jemput Hikmah</p>
+                    <span id="hikmahCount" class="stat-badge">0</span>
+                </div>
+                <div class="text-center">
+                    <p class="text-[7px] font-black uppercase text-slate-400 mb-1">Total Share</p>
+                    <span id="shareCount" class="stat-badge">0</span>
+                </div>
             </div>
         </div>
     </div>
@@ -79,6 +93,27 @@
 
     <script>
         const API_KEY = "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"; 
+
+        // Local Storage Init untuk tampilan counter sementara
+        let localStats = JSON.parse(localStorage.getItem('jedaStats')) || { hikmah: 0, share: 0 };
+        function updateDisplay() {
+            document.getElementById('hikmahCount').innerText = localStats.hikmah;
+            document.getElementById('shareCount').innerText = localStats.share;
+            localStorage.setItem('jedaStats', JSON.stringify(localStats));
+        }
+        updateDisplay();
+
+        async function logEvent(eventType) {
+            console.log(`[LOG] Mencoba mencatat: ${eventType}`);
+            try {
+                // Background fetch agar tidak menghalangi UI
+                fetch('/api/log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: eventType, timestamp: new Date().toISOString() })
+                }).catch(() => console.log("API belum terpasang, dilewati..."));
+            } catch (e) {}
+        }
 
         function validate() {
             const val = document.getElementById('userInput').value.trim();
@@ -93,25 +128,41 @@
             } catch (e) { return null; }
         }
 
+        async function shareTo(platform, text) {
+            const footer = "\n\nTerapi Hati di: jeda-sanubari.vercel.app";
+            const fullText = text + footer;
+            
+            localStats.share++;
+            updateDisplay();
+            logEvent(`share_${platform}`);
+
+            if (navigator.share) {
+                navigator.share({ title: 'JedaSanubari', text: fullText }).catch(() => {});
+            } else {
+                let url = "";
+                if(platform === 'wa') url = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
+                if(platform === 'ig' || platform === 'threads') url = `https://www.threads.net/intent/post?text=${encodeURIComponent(fullText)}`;
+                window.open(url, '_blank');
+            }
+        }
+
         async function pancarHikmah() {
             const input = document.getElementById('userInput').value;
             const btn = document.getElementById('sendBtn');
             const content = document.getElementById('aiContent');
             
+            localStats.hikmah++;
+            updateDisplay();
+            logEvent('jemput_hikmah');
+
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
             content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menyambungkan Sanubari...</div>`;
 
             const systemPrompt = `KONTEKS USER: "${input}". 
             TUGAS: Berikan respon yang SANGAT DINAMIS sesuai keluhan user.
-            
-            1. "summary": WAJIB diawali frasa "Terinspirasi dari pemikiran [Ulama] dalam kitab [Kitab]..." lalu sambungkan dengan nasehat minimal 3 kalimat yang MENJAWAB MASALAH user secara spesifik.
-            2. "quran": Cari ayat yang benar-benar relevan dengan emosi user.
-            3. "sirah": Ceritakan kisah tokoh yang menghadapi masalah SERUPA dengan user.
-            4. "yt_query": WAJIB buat kueri unik berdasarkan curhatan. JANGAN gunakan kueri umum.
-            
             WAJIB FORMAT JSON: {
-                "summary": "Full narasi (min 3 kalimat)",
+                "summary": "Full narasi (min 3 kalimat) diawali rujukan kitab klasik",
                 "quran": { "s": "no", "a": "no", "name": "Surah", "alasan": "..." },
                 "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "deep_query": "..." },
                 "asatidz": "Adi Hidayat/Hanan Attaki/Salim A. Fillah",
@@ -135,6 +186,7 @@
                 const res = JSON.parse(data.choices[0].message.content);
                 const q = await getQuranData(res.quran.s, res.quran.a);
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}`;
+                const shareText = `"${res.summary}"\n\nHikmah: ${res.quran.name} ${res.quran.s}:${res.quran.a}`;
 
                 content.innerHTML = `
                     <div class="glass-card p-10 bg-slate-900 text-white text-center shadow-2xl">
@@ -148,24 +200,23 @@
                         <div class="mt-8 gradient-border text-[11px] leading-relaxed italic text-slate-600">${res.quran.alasan}</div>
                     </div>
 
-                    <div class="glass-card p-10 bg-white text-center">
-                        <h2 class="text-2xl font-black italic text-slate-900 mb-2 uppercase text-center w-full">${res.sirah.judul}</h2>
-                        <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest text-center w-full">Tokoh: ${res.sirah.tokoh}</p>
-                        <p class="text-slate-700 leading-relaxed font-medium italic px-6 mb-10 border-l-2 border-slate-100 pl-6 text-left">"${res.sirah.narasi}"</p>
-                        <a href="https://www.google.com/search?q=${encodeURIComponent('sirah nabawiyah ' + res.sirah.deep_query)}" target="_blank" class="block text-center bg-slate-50 text-slate-900 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest border border-slate-200">Telusuri Referensi Kisah ↗</a>
-                    </div>
-
-                    <div class="glass-card p-12 bg-white border-slate-100 text-center shadow-xl">
+                    <div class="glass-card p-12 bg-white border-slate-100 text-center shadow-xl mb-10">
                         <h3 class="font-black uppercase text-[10px] text-slate-400 mb-8 tracking-widest text-center w-full">Tausiyah Ustadz ${res.asatidz}</h3>
                         <p class="text-2xl italic font-serif text-slate-700 mb-10 leading-relaxed text-left">"${res.kutipan}"</p>
-                        <a href="${ytUrl}" target="_blank" class="yt-btn">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg>
-                            Tonton Video Tausiyah ↗
-                        </a>
+                        <a href="${ytUrl}" target="_blank" class="yt-btn mb-10">Tonton Video Tausiyah ↗</a>
+                        
+                        <div class="pt-8 border-t border-slate-100">
+                            <p class="text-[8px] font-black uppercase text-slate-400 tracking-[0.3em] mb-6">Bagikan Hikmah Ini</p>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button onclick="shareTo('wa', '${shareText}')" class="share-btn">Whatsapp</button>
+                                <button onclick="shareTo('ig', '${shareText}')" class="share-btn">Instagram</button>
+                                <button onclick="shareTo('threads', '${shareText}')" class="share-btn">Threads</button>
+                            </div>
+                        </div>
                     </div>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">Sanad sedang sibuk, Pak. Mohon jemput lagi hikmahnya.</div>`;
+                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] text-center w-full">Silakan coba lagi beberapa saat lagi.</div>`;
             } finally {
                 btn.disabled = false;
             }
