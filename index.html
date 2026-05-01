@@ -18,7 +18,7 @@
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Groq Engine Active</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Deep Verification Active</div>
         <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
         <p class="text-[9px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2">Created by <b>RRD</b></p>
     </header>
@@ -35,7 +35,6 @@
     </div>
 
     <script>
-        // Menggunakan Groq Key Bapak yang sudah terbukti stabil
         const API_KEY = "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"; 
 
         function validate() {
@@ -55,15 +54,20 @@
             const input = document.getElementById('userInput').value;
             const content = document.getElementById('aiContent');
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase">Menenangkan Sanubari via Groq...</div>`;
+            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase">Menenangkan Sanubari...</div>`;
 
+            // PERUBAHAN UTAMA: Instruksi keyword diperketat agar spesifik (Nama Tokoh + Peristiwa)
             const systemPrompt = `USER INPUT: "${input}". 
-            TUGAS: Berikan nasihat islami yang empati. 
-            SYARAT: Cari 1 Ayat & 1 Kisah Sirah yang relevan secara SEMANTIK (isi ayat harus nyambung dengan masalah user).
+            TUGAS: Berikan nasihat islami. 
             FORMAT JSON: {
                 "summary": "Nasehat pembuka",
                 "quran": { "s": "no", "a": "no", "name": "...", "alasan": "Kaitan ayat" },
-                "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "keyword": "..." },
+                "sirah": { 
+                    "tokoh": "...", 
+                    "judul": "...", 
+                    "narasi": "...", 
+                    "keyword_verifikasi": "KATA KUNCI SPESIFIK (CONTOH: 'Kisah Nabi Muhammad menyuapi pengemis buta Yahudi' atau 'Kisah Umar bin Khattab dan ibu pemasak batu')" 
+                },
                 "asatidz": "Adi Hidayat/Salim A. Fillah/Hanan Attaki",
                 "kutipan": "...",
                 "yt_query": "..."
@@ -95,14 +99,14 @@
                         <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
                         <p class="text-slate-700 text-center italic px-4 leading-relaxed">"${q ? q.i : "..."}"</p>
                         <div class="mt-8 gradient-border bg-emerald-50/50 p-6 rounded-2xl text-xs italic text-slate-600">${res.quran.alasan}</div>
-                        <a href="https://quran.com/${res.quran.s}:${res.quran.a}" target="_blank" class="mt-8 block text-center bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest">Baca Tafsir ↗</a>
                     </div>
 
                     <div class="glass-card p-10 bg-white">
                         <h2 class="text-2xl font-black italic text-slate-900 mb-2 uppercase text-center">${res.sirah.judul}</h2>
                         <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest text-center">Tokoh: ${res.sirah.tokoh}</p>
                         <p class="text-slate-700 leading-relaxed font-medium italic px-6 mb-10 border-l-2 border-slate-100 pl-6 text-left">"${res.sirah.narasi}"</p>
-                        <a href="https://www.google.com/search?q=${encodeURIComponent(res.sirah.keyword)}" target="_blank" class="block text-center bg-slate-100 text-slate-900 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest border border-slate-200">Verifikasi Artikel ↗</a>
+                        
+                        <a href="https://www.google.com/search?q=${encodeURIComponent('sirah nabawiyah ' + res.sirah.keyword_verifikasi)}" target="_blank" class="block text-center bg-slate-100 text-slate-900 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest border border-slate-200">Verifikasi Kisah Sirah ↗</a>
                     </div>
 
                     <div class="glass-card p-12 bg-white shadow-xl border-slate-100">
@@ -114,7 +118,7 @@
                     <footer class="text-center pt-10 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic">Created by <b>RRD</b></footer>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center">Terjadi kendala pada Sanad Groq. Mohon coba sesaat lagi.</div>`;
+                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center">Terjadi kendala pada Sanad Hikmah. Mohon coba sesaat lagi.</div>`;
             }
         }
     </script>
