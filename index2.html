@@ -20,29 +20,28 @@
             overflow: hidden;
         }
         .arabic-font { font-family: 'Amiri', serif; direction: rtl; line-height: 2.2; font-size: 2.4rem; color: #064e3b; text-align: center; }
-        .btn-action { background: #064e3b; color: white; padding: 14px 20px; border-radius: 16px; font-size: 0.75rem; font-weight: 800; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; width: 100%; }
+        .btn-action { background: #0f172a; color: white; padding: 14px 20px; border-radius: 16px; font-size: 0.75rem; font-weight: 800; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; width: 100%; }
         .btn-yt { background: #ef4444; margin-top: 10px; border: none; }
-        .btn-article { background: #f1f5f9; color: #064e3b; border: 1px solid #e2e8f0; margin-top: 10px; }
-        .btn-main { background: #0f172a; color: white; padding: 20px 40px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.7rem; transition: 0.3s; }
-        .btn-main:disabled { background: #e2e8f0; color: #94a3b8; transform: none; }
+        .btn-main { background: #0f172a; color: white; padding: 20px 40px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.7rem; }
+        .btn-main:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
     </style>
 </head>
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
         <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">
-            Beta v0.1 | Contextual Integrity
+            Beta v0.1 | Stable Final Edition
         </div>
         <h1 class="text-4xl font-extrabold tracking-tighter italic mb-1 text-slate-900 leading-none">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.6em] text-slate-400 font-bold italic mt-2 text-center">Created by <b>RRD</b></p>
+        <p class="text-[10px] uppercase tracking-[0.6em] text-slate-400 font-bold italic mt-2">Created by <b>RRD</b></p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12 border-emerald-50">
         <div class="flex justify-between items-center mb-6">
-            <span class="text-[9px] font-black text-emerald-800 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-md">Gerbang Munajat</span>
+            <span class="text-[9px] font-black text-emerald-800 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-md">Muara Hati</span>
             <span id="wordCounter" class="text-[9px] font-bold text-slate-400">0 / 10 Kata</span>
         </div>
-        <textarea id="userInput" oninput="validateInput()" placeholder="Sampaikan apa yang sedang mengusik batin Anda..." 
+        <textarea id="userInput" oninput="validateInput()" placeholder="Sampaikan apa yang mengusik ketenangan batin Anda..." 
             class="w-full bg-transparent focus:outline-none text-xl h-44 resize-none italic placeholder:text-slate-200 leading-relaxed"></textarea>
         <div class="flex justify-center pt-8 border-t border-slate-50">
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-2xl">Jemput Hikmah ↗</button>
@@ -54,7 +53,8 @@
     </div>
 
     <script>
-        const GROQ_KEY = "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"; 
+        // Gunakan Groq Key Bapak yang terbukti stabil secara pemanggilan HTTP
+        const API_KEY = "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"; 
 
         function validateInput() {
             const val = document.getElementById('userInput').value.trim();
@@ -78,60 +78,61 @@
 
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="glass-card p-24 text-center text-slate-400 italic animate-pulse tracking-widest uppercase text-[10px]">Menyelaraskan Sanad Hikmah...</div>`;
+            content.innerHTML = `<div class="glass-card p-24 text-center text-slate-400 italic animate-pulse tracking-widest uppercase text-[10px]">Menyusun Sanad Hikmah...</div>`;
 
-            // PROMPT DENGAN FILTER KETAT: Menekankan relevansi makna bukan sekadar nama surat.
+            // PROMPT DENGAN VERIFIKASI KONTEKSTUAL KETAT
             const systemPrompt = `USER INPUT: "${input}". 
-            TUGAS: Cari 1 Ayat & 1 Kisah Sirah yang secara SEMANTIK relevan. 
-            KRITERIA AYAT: Isinya harus membahas emosi user (misal: sabar, kasih sayang, ketenangan). 
-            DILARANG: Mengambil ayat hanya karena nama suratnya mirip (misal: input "anak" tapi ambil ayat geologi di Surat Luqman).
+            TUGAS: Cari 1 Ayat Quran & 1 Kisah Sirah. 
+            SYARAT MUTLAK: Isi ayat HARUS relevan dengan emosi user. JANGAN berikan ayat geologi/alam jika user curhat masalah hati.
             JSON: {
-                "summary": "Nasehat pembuka yang syahdu",
-                "quran": { "s": "no", "a": "no", "name": "...", "alasan": "Kenapa ayat ini relevan dengan curhatan user?" },
-                "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "keyword_cari": "kata kunci spesifik Google" },
+                "summary": "Nasehat syahdu pembuka (Inklusif)",
+                "quran": { "s": "no", "a": "no", "name": "...", "alasan": "Mengapa ayat ini relevan?" },
+                "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "keyword": "Keyword Google" },
                 "asatidz": "Adi Hidayat/Salim A. Fillah/Hanan Attaki",
-                "kutipan": "...",
-                "yt_query": "..."
+                "kutipan": "Kutipan inspiratif",
+                "yt_query": "Kueri YouTube"
             }`;
 
             try {
                 const groqReq = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "system", content: systemPrompt }], temperature: 0, response_format: { "type": "json_object" } })
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        model: "llama-3.3-70b-versatile", 
+                        messages: [{ role: "system", content: systemPrompt }], 
+                        temperature: 0, 
+                        response_format: { "type": "json_object" } 
+                    })
                 });
 
                 const groqJson = await groqReq.json();
                 const res = JSON.parse(groqJson.choices[0].message.content);
                 const qData = await getQuranData(res.quran.s, res.quran.a);
                 
-                const searchLink = `https://www.google.com/search?q=${encodeURIComponent(res.sirah.keyword_cari)}`;
+                const searchLink = `https://www.google.com/search?q=${encodeURIComponent(res.sirah.keyword)}`;
                 const ytLink = `https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}`;
 
                 content.innerHTML = `
                     <div class="glass-card p-10 bg-slate-900 text-white border-none text-center shadow-2xl">
-                         <p class="text-[9px] font-black uppercase tracking-[0.5em] text-emerald-400 mb-6 italic">Muhasabah Diri</p>
+                         <p class="text-[9px] font-black uppercase tracking-[0.5em] text-emerald-400 mb-6 italic">Muhasabah</p>
                          <p class="text-xl italic font-medium leading-relaxed text-slate-200">"${res.summary}"</p>
                     </div>
 
                     <div class="glass-card p-10 border-white">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-10 text-center tracking-[0.3em]">Kalamullah (Data Terverifikasi)</span>
-                        <p class="arabic-font mb-10">${qData ? qData.arab : "Gagal memuat teks Suci."}</p>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-10 text-center tracking-[0.3em]">Kalamullah (API Live)</span>
+                        <p class="arabic-font mb-10">${qData ? qData.arab : "Gagal memuat teks."}</p>
                         <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-[0.2em]">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
                         <p class="text-slate-700 leading-relaxed text-center font-medium italic mb-10 px-4 text-lg">"${qData ? qData.indo : "..."}"</p>
-                        <div class="bg-emerald-50/50 p-8 rounded-3xl border-l-4 border-emerald-500 text-left mb-8">
-                            <p class="text-[9px] font-black uppercase text-emerald-700 mb-2 tracking-widest italic">Kaitan Hikmah:</p>
-                            <p class="text-sm text-slate-600 leading-relaxed italic">${res.quran.alasan}</p>
-                        </div>
-                        <a href="https://quran.com/${res.quran.s}:${res.quran.a}?locale=id" target="_blank" class="btn-action">📖 Baca Tafsir Lengkap di Quran.com ↗</a>
+                        <div class="bg-emerald-50/50 p-8 rounded-3xl border-l-4 border-emerald-500 text-left mb-8"><p class="text-sm text-slate-600 leading-relaxed italic">${res.quran.alasan}</p></div>
+                        <a href="https://quran.com/${res.quran.s}:${res.quran.a}?locale=id" target="_blank" class="btn-action">📖 Baca Tafsir di Quran.com ↗</a>
                     </div>
                     
                     <div class="glass-card p-10 text-center border-white">
-                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-8 tracking-[0.3em]">Sirah & Keteladanan</span>
+                        <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-8 tracking-[0.3em]">Sirah Keteladanan</span>
                         <h2 class="text-2xl font-extrabold text-slate-900 mb-2 uppercase italic leading-tight">${res.sirah.judul}</h2>
                         <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest italic">Tokoh: ${res.sirah.tokoh}</p>
                         <p class="text-slate-700 leading-relaxed font-medium italic px-4 mb-10 text-left border-l-2 border-slate-100 pl-6">"${res.sirah.narasi}"</p>
-                        <a href="${searchLink}" target="_blank" class="btn-action btn-article uppercase tracking-widest italic">🔗 Cari Artikel Referensi ↗</a>
+                        <a href="${searchLink}" target="_blank" class="btn-action bg-slate-100 !text-slate-900 border border-slate-200 uppercase tracking-widest italic">🔗 Verifikasi Artikel ↗</a>
                     </div>
 
                     <div class="glass-card p-12 bg-white border-slate-100 shadow-xl">
