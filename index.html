@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 | Precise Verification</title>
+    <title>JedaSanubari v0.1 | Final Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -18,13 +18,13 @@
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Precise Verification Active</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Final Hyper-Stable</div>
         <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.6em] text-slate-400 font-bold italic mt-2">Created by <b>RRD</b></p>
+        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2">Created by <b>RRD</b></p>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12">
-        <textarea id="userInput" oninput="validate()" placeholder="Sampaikan apa yang mengusik batin Anda..." class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
+        <textarea id="userInput" oninput="validate()" placeholder="Tumpahkan keluh kesah Anda (min. 10 kata)..." class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
         <div class="flex justify-center pt-8 border-t border-slate-50">
             <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main shadow-2xl">Jemput Hikmah ↗</button>
         </div>
@@ -52,26 +52,14 @@
 
         async function pancarHikmah() {
             const input = document.getElementById('userInput').value;
+            const btn = document.getElementById('sendBtn');
             const content = document.getElementById('aiContent');
+            
+            btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase">Menenangkan Sanubari...</div>`;
+            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menyambungkan Sanad Hikmah...</div>`;
 
-            // INSTRUKSI DIPERTAMJAM: Meminta keyword yang menggabungkan Tokoh + Aksi Spesifik + Sumber Literatur
-            const systemPrompt = `USER INPUT: "${input}". 
-            TUGAS: Berikan nasihat islami. 
-            WAJIB FORMAT JSON: {
-                "summary": "Nasehat pembuka",
-                "quran": { "s": "no", "a": "no", "name": "...", "alasan": "Kaitan ayat" },
-                "sirah": { 
-                    "tokoh": "...", 
-                    "judul": "...", 
-                    "narasi": "...", 
-                    "deep_query": "CONTOH: 'Kisah Rasulullah SAW menyuapi Yahudi buta di pojok pasar madinah'" 
-                },
-                "asatidz": "Adi Hidayat/Salim A. Fillah/Hanan Attaki",
-                "kutipan": "...",
-                "yt_query": "..."
-            }`;
+            const prompt = `INPUT: "${input}". TUGAS: Berikan nasihat islami. WAJIB JSON: {"summary":"...","quran":{"s":"no","a":"no","name":"...","alasan":"..."},"sirah":{"tokoh":"...","judul":"...","narasi":"...","deep_query":"..."},"asatidz":"...","kutipan":"...","yt_query":"..."}`;
 
             try {
                 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -79,17 +67,18 @@
                     headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         model: "llama-3.3-70b-versatile", 
-                        messages: [{ role: "system", content: systemPrompt }], 
+                        messages: [{ role: "system", content: prompt }], 
                         temperature: 0, 
                         response_format: { "type": "json_object" } 
                     })
                 });
 
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
                 const data = await response.json();
                 const res = JSON.parse(data.choices[0].message.content);
                 const q = await getQuranData(res.quran.s, res.quran.a);
 
-                // PENYEMPURNAAN LINK: Menambahkan filter 'sirah nabawiyah' dan 'kisah nyata' secara hardcoded
                 const finalVerifyLink = `https://www.google.com/search?q=${encodeURIComponent('sirah nabawiyah ' + res.sirah.deep_query + ' lengkap')}`;
 
                 content.innerHTML = `
@@ -98,20 +87,20 @@
                     </div>
 
                     <div class="glass-card p-10 border-slate-100">
-                        <p class="arabic-font mb-10 w-full text-center">${q ? q.a : "..."}</p>
+                        <p class="arabic-font mb-10 w-full text-center text-center">${q ? q.a : "..."}</p>
                         <p class="text-center text-emerald-600 font-bold mb-4 uppercase text-[10px] tracking-widest text-center w-full">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
                         <p class="text-slate-700 text-center italic px-4 leading-relaxed text-center w-full">"${q ? q.i : "..."}"</p>
                         <div class="mt-8 gradient-border bg-emerald-50/50 p-6 rounded-2xl text-xs italic text-slate-600">${res.quran.alasan}</div>
                     </div>
 
-                    <div class="glass-card p-10 bg-white">
+                    <div class="glass-card p-10 bg-white text-center">
                         <h2 class="text-2xl font-black italic text-slate-900 mb-2 uppercase text-center w-full">${res.sirah.judul}</h2>
-                        <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest text-center w-full text-center">Tokoh: ${res.sirah.tokoh}</p>
+                        <p class="text-emerald-600 font-bold mb-8 uppercase text-[10px] tracking-widest text-center w-full">Tokoh: ${res.sirah.tokoh}</p>
                         <p class="text-slate-700 leading-relaxed font-medium italic px-6 mb-10 border-l-2 border-slate-100 pl-6 text-left">"${res.sirah.narasi}"</p>
                         <a href="${finalVerifyLink}" target="_blank" class="block text-center bg-slate-100 text-slate-900 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest border border-slate-200">Verifikasi Sanad Kisah ↗</a>
                     </div>
 
-                    <div class="glass-card p-12 bg-white shadow-xl border-slate-100">
+                    <div class="glass-card p-12 bg-white shadow-xl border-slate-100 text-center">
                         <h3 class="font-black uppercase text-[10px] text-slate-400 mb-6 tracking-widest text-center w-full">Dawuh Ustadz ${res.asatidz}</h3>
                         <p class="text-2xl italic font-serif text-slate-700 mb-10 leading-relaxed text-left">"${res.kutipan}"</p>
                         <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(res.asatidz + ' ' + res.yt_query)}" target="_blank" class="block text-center bg-red-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg">Simak di YouTube</a>
@@ -120,7 +109,11 @@
                     <footer class="text-center pt-10 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic text-center w-full">Created by <b>RRD</b></footer>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">Kendala teknis pada Sanad Groq.</div>`;
+                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">
+                    Gagal memuat Hikmah.<br>Log: ${err.message}<br>Mohon klik tombol sekali lagi.
+                </div>`;
+            } finally {
+                btn.disabled = false;
             }
         }
     </script>
