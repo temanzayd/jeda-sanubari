@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 | Final Stable</title>
+    <title>JedaSanubari v0.1 | Authentic Wisdom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -18,7 +18,7 @@
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Final Hyper-Stable</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Authentic Sanad Active</div>
         <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
         <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2 text-center w-full">Created by <b>RRD</b></p>
     </header>
@@ -59,24 +59,20 @@
             document.getElementById('resultArea').classList.remove('hidden');
             content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menyambungkan Sanad Hikmah...</div>`;
 
-            // PROMPT DIPERKUAT: Mengunci narasi ke Ulama Besar & Spesifisitas Sirah
+            // PROMPT DIPERKUAT: Mewajibkan atribusi kitab dan ulama secara eksplisit
             const systemPrompt = `USER INPUT: "${input}". 
             TUGAS: Berikan nasihat islami yang mendalam.
-            SYARAT NARASI: 
-            1. Bagian "summary" WAJIB merujuk pada pemikiran Ulama Besar (seperti Imam Al-Ghazali, Ibnu Qayyim, atau Ibnu Atha'illah).
-            2. Gaya bahasa harus berwibawa, syahdu, dan berbobot tasawuf/aqidah murni.
-            3. Bagian "deep_query" Sirah harus sangat spesifik menggabungkan Nama Tokoh + Aksi Utama.
+            WAJIB:
+            1. Bagian "summary" HARUS dimulai dengan frasa "Terinspirasi dari pemikiran [Nama Ulama] dalam kitab [Nama Kitab]...".
+            2. Ulama yang dirujuk harus kaliber besar (Imam Al-Ghazali, Ibnu Qayyim, Ibnu Atha'illah, dsb).
+            3. Narasi harus berbobot, bukan sekadar motivasi umum.
+            4. "deep_query" sirah harus spesifik Tokoh + Peristiwa.
 
             WAJIB FORMAT JSON: {
-                "summary": "Intisari hikmah berdasarkan pemikiran ulama terpercaya",
+                "summary": "Narasi hikmah yang diawali rujukan ulama & kitab",
                 "quran": { "s": "no", "a": "no", "name": "...", "alasan": "..." },
-                "sirah": { 
-                    "tokoh": "...", 
-                    "judul": "...", 
-                    "narasi": "...", 
-                    "deep_query": "CONTOH: 'Kisah Rasulullah SAW menyuapi Yahudi buta di pojok pasar madinah'" 
-                },
-                "asatidz": "Adi Hidayat/Salim A. Fillah/Hanan Attaki",
+                "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "deep_query": "..." },
+                "asatidz": "...",
                 "kutipan": "...",
                 "yt_query": "..."
             }`;
@@ -92,8 +88,6 @@
                         response_format: { "type": "json_object" } 
                     })
                 });
-
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
                 const data = await response.json();
                 const res = JSON.parse(data.choices[0].message.content);
@@ -129,9 +123,7 @@
                     <footer class="text-center pt-10 uppercase text-[0.7rem] text-slate-300 tracking-[0.8em] font-black italic text-center w-full">Created by <b>RRD</b></footer>
                 `;
             } catch (err) {
-                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">
-                    Gagal memuat Hikmah.<br>Log: ${err.message}<br>Mohon klik tombol sekali lagi.
-                </div>`;
+                content.innerHTML = `<div class="p-8 bg-red-50 text-red-600 text-[10px] font-mono border border-red-200 rounded-3xl text-center w-full">Gagal memuat Hikmah. Mohon coba sesaat lagi.</div>`;
             } finally {
                 btn.disabled = false;
             }
