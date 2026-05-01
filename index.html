@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 | Final Master</title>
+    <title>JedaSanubari v0.1 | Optimized Wisdom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -18,7 +18,7 @@
 <body class="p-6 md:p-12 flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Final Master Stable</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Optimized Prompt Engine</div>
         <h1 class="text-3xl font-extrabold italic text-slate-900">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
         <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 font-bold mt-2 text-center w-full">Created by <b>RRD</b></p>
     </header>
@@ -57,24 +57,25 @@
             
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menyambungkan Sanad Hikmah...</div>`;
+            content.innerHTML = `<div class="p-12 text-center italic text-slate-400 animate-pulse text-[10px] tracking-widest uppercase w-full">Menyelami Sanad Hikmah...</div>`;
 
+            // OPTIMIZED PROMPT: Menggunakan rujukan kitab yang lebih kaku & diksi khas asatidz
             const systemPrompt = `USER INPUT: "${input}". 
-            TUGAS: Berikan nasihat islami yang mendalam.
+            TUGAS: Berikan nasihat islami yang sangat mendalam dan berbobot literatur.
             
-            KONSTRUKSI SUMBER (WAJIB):
-            1. "summary": WAJIB dimulai dengan "Terinspirasi dari pemikiran [Nama Ulama Klasik] dalam kitab [Nama Kitab]...". Ulama klasik harus dari kelompok: Imam Al-Ghazali, Ibnu Qayyim, Ibnu Atha'illah, atau Imam An-Nawawi.
-            2. "sirah": Kisah nyata dari kehidupan Nabi SAW atau Sahabat.
-            3. "asatidz": WAJIB pilih HANYA SATU dari: Adi Hidayat, Hanan Attaki, atau Salim A. Fillah. (TIDAK BOLEH tokoh klasik di sini).
-            4. "kutipan": Nasehat khas ustadz kontemporer yang dipilih tersebut.
+            KONSTRUKSI SUMBER (STRICT):
+            1. "summary": WAJIB dimulai dengan "Terinspirasi dari pemikiran [Nama Ulama Klasik] dalam kitab [Nama Kitab] (Bab/Pasal terkait)...". Pastikan narasinya mencerminkan argumen teologis atau tasawuf yang kuat, bukan kata-kata manis belaka.
+            2. "sirah": Berikan kisah spesifik (Nama Tokoh, Lokasi, Kejadian) dari sejarah Nabi SAW/Sahabat.
+            3. "asatidz": Pilih SATU (Adi Hidayat, Hanan Attaki, Salim A. Fillah).
+            4. "kutipan": WAJIB gunakan diksi khas ustadz terpilih (Misal: UAH dengan penjelasan akar kata/bahasa, UHA dengan diksi 'shifting' atau 'langit', USF dengan gaya sastra/sejarahnya).
 
             WAJIB FORMAT JSON: {
-                "summary": "Narasi hikmah klasik yang diawali rujukan ulama & kitab",
-                "quran": { "s": "no", "a": "no", "name": "Surah Name", "alasan": "Kaitan ayat" },
-                "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "deep_query": "Contoh: Kisah Umar bin Khattab saat..." },
-                "asatidz": "Nama Ustadz Terpilih",
-                "kutipan": "Nasehat ustadz tersebut...",
-                "yt_query": "Topik spesifik untuk pencarian"
+                "summary": "...",
+                "quran": { "s": "no", "a": "no", "name": "Surah Name", "alasan": "Kaitan mendalam secara hukum/hikmah" },
+                "sirah": { "tokoh": "...", "judul": "...", "narasi": "...", "deep_query": "Kueri spesifik sejarah" },
+                "asatidz": "Nama Ustadz",
+                "kutipan": "Nasehat dengan gaya bahasa ustadz tersebut",
+                "yt_query": "Kata kunci YouTube yang sangat spesifik"
             }`;
 
             try {
@@ -84,7 +85,7 @@
                     body: JSON.stringify({ 
                         model: "llama-3.3-70b-versatile", 
                         messages: [{ role: "system", content: systemPrompt }], 
-                        temperature: 0.1, 
+                        temperature: 0.2, // Rendah untuk konsistensi data klasik
                         response_format: { "type": "json_object" } 
                     })
                 });
