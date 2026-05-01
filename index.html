@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.1 | Beta Testing</title>
+    <title>JedaSanubari v0.1 | Master Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -39,12 +39,12 @@
     <div class="watermark">Created by RRD</div>
 
     <header class="text-center mb-16 max-w-md">
-        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Beta Testing</div>
+        <div class="inline-block px-4 py-1 mb-6 border border-slate-200 rounded-full bg-white/80 text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">v0.1 | Master Stable</div>
         <h1 class="text-4xl font-extrabold italic text-slate-900 tracking-tighter">Jeda<span class="text-emerald-600 font-normal">Sanubari</span></h1>
         
         <p class="mt-6 text-[11px] leading-relaxed text-slate-500 font-medium italic px-4 uppercase tracking-[0.1em]">
             Tempat sejenak menepi dari riuhnya dunia. <br>
-            Tumpahkan keluhmu, jemput hikmah dari kalam Allah, <br>
+            Tumpahkan keluhmu, jemput hikmah dari kalam Tuhan, <br>
             jejak Sirah Nabawiyah, dan nasehat para Ulama.
         </p>
 
@@ -56,9 +56,20 @@
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-12 shadow-2xl">
-        <textarea id="userInput" oninput="validate()" placeholder="Tuliskan apa yang sedang menyesakkan sanubarimu... (min. 10 kata)..." class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
-        <div class="flex justify-center pt-8 border-t border-slate-100">
-            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main">Jemput Hikmah ↗</button>
+        <textarea id="userInput" oninput="validate()" placeholder="Tuliskan apa yang sedang menyesakkan sanubarimu... (min. 10 kata)" class="w-full bg-transparent focus:outline-none text-lg h-40 resize-none italic leading-relaxed"></textarea>
+        
+        <div class="flex flex-col items-center pt-8 border-t border-slate-100">
+            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main mb-8">Jemput Hikmah ↗</button>
+            
+            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+                <p class="text-[9px] uppercase tracking-[0.2em] font-black text-slate-400 mb-2">Disclaimer:</p>
+                <p class="text-[10px] leading-relaxed text-slate-500 italic">
+                    Ini semua full bikin pakai AI, dengan prompt-prompt yang tak terlalu teknis, maklum orang mager. 
+                    Sangat mungkin hasilnya masih jauh dari relevan dan sangat mungkin referensinya salah. 
+                    Jadikan ini bahan "curhat tipis-tipis" aja ya warga 😁. Paling tidak jadi baca quote-quote bijak, 
+                    baca ayat Al-Qur'an, atau malah jadi nontonin video tausiyah ustadz.
+                </p>
+            </div>
         </div>
     </div>
 
@@ -97,7 +108,7 @@
             1. "summary": WAJIB diawali frasa "Terinspirasi dari pemikiran [Ulama] dalam kitab [Kitab]..." lalu sambungkan dengan nasehat minimal 3 kalimat yang MENJAWAB MASALAH user secara spesifik.
             2. "quran": Cari ayat yang benar-benar relevan dengan emosi user.
             3. "sirah": Ceritakan kisah tokoh yang menghadapi masalah SERUPA dengan user.
-            4. "yt_query": WAJIB buat kueri unik berdasarkan curhatan (Contoh: "solusi futur dalam ibadah", "cara ikhlas dikhianati teman"). JANGAN gunakan kueri umum.
+            4. "yt_query": WAJIB buat kueri unik berdasarkan curhatan. JANGAN gunakan kueri umum.
             
             WAJIB FORMAT JSON: {
                 "summary": "Full narasi (min 3 kalimat)",
