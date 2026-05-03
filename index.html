@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.3.3 | Emerald Final Sanad</title>
+    <title>JedaSanubari v0.3.5 | Absolute Sync Guard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -29,24 +29,22 @@
         .btn-main:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
         .btn-main:disabled { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; }
         
+        /* Typography Theme */
         .emerald-text { color: var(--emerald); font-weight: 700; }
-        .gradient-border { border-left: 5px solid var(--gold); background: linear-gradient(to right, rgba(6, 78, 59, 0.05), transparent); border-radius: 0 1rem 1rem 0; padding: 1.5rem; color: var(--emerald); font-weight: 700; font-size: 15px; line-height: 1.6; }
-        
-        .yt-btn { background: #ff0000; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; font-size: 10px; width: 100%; text-decoration: none; }
+        .gradient-border { border-left: 5px solid var(--gold); background: linear-gradient(to right, rgba(6, 78, 59, 0.05), transparent); border-radius: 0 1rem 1rem 0; padding: 1.5rem; color: var(--emerald); font-weight: 700; font-size: 15px; line-height: 1.7; }
         
         .share-btn { border: 2px solid var(--emerald); background: #fff; padding: 14px; border-radius: 18px; transition: 0.3s; display: flex; flex-direction: column; items: center; gap: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--emerald); width: 100%; cursor: pointer; }
         .share-btn:hover { background: var(--emerald); color: white; transform: translateY(-2px); }
         
         .divider-ornament { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 40px 0; opacity: 0.2; }
-        .divider-line { height: 1.5px; width: 60px; background: var(--emerald); }
     </style>
 </head>
 <body class="flex flex-col items-center">
 
     <header class="text-center mb-16 max-w-sm mt-10">
-        <div class="inline-block px-5 py-2 mb-6 border border-slate-100 rounded-full bg-white shadow-sm text-[9px] font-black text-slate-400 uppercase tracking-[0.4em]">v0.3.3 | Emerald Final Sanad</div>
+        <div class="inline-block px-5 py-2 mb-6 border border-slate-100 rounded-full bg-white shadow-sm text-[9px] font-black text-slate-400 uppercase tracking-[0.4em]">v0.3.5 | Absolute Sync Guard</div>
         <h1 class="text-4xl font-extrabold italic text-slate-900 tracking-tighter">Jeda<span class="text-emerald-700 font-normal">Sanubari</span></h1>
-        <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700">❈</div><div class="divider-line"></div></div>
+        <div class="divider-ornament"><div class="divider-line h-[1.5px] w-14 bg-[#064e3b]"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line h-[1.5px] w-14 bg-[#064e3b]"></div></div>
     </header>
 
     <div class="w-full max-w-xl glass-card p-10 mb-16">
@@ -103,7 +101,10 @@
                     fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?verse_key=${s}:${a}`).then(r => r.json()),
                     fetch(`https://api.quran.com/api/v4/verses/by_key/${s}:${a}?translations=33`).then(r => r.json())
                 ]);
-                return { a: rA.verses[0].text_uthmani, i: rI.verse.translations[0].text.replace(/<[^>]*>?/gm, '') };
+                if(rA.verses && rI.verse) {
+                    return { a: rA.verses[0].text_uthmani, i: rI.verse.translations[0].text.replace(/<[^>]*>?/gm, '') };
+                }
+                return null;
             } catch (e) { return null; }
         }
 
@@ -121,15 +122,14 @@
             const btn = document.getElementById('sendBtn');
             const content = document.getElementById('aiContent');
             
-            localStats.hikmah++; updateDisplay();
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-20 text-center italic text-emerald-800 animate-pulse text-sm tracking-[0.6em] uppercase w-full font-black">Bismillah, Meminta Petunjuk...</div>`;
+            content.innerHTML = `<div class="p-20 text-center italic text-emerald-800 animate-pulse text-sm tracking-[0.6em] uppercase w-full font-black">Bismillah, Menyusun Hikmah...</div>`;
 
-            const systemPrompt = `Role: Ulama. Konteks: "${input}". 
-            1. summary: Nasehat (max 4 kalimat). WAJIB diawali rujukan kitab shahih (Contoh: "Berdasarkan Kitab Al-Hikam...").
-            2. kutipan: Quote SINGKAT (max 2 kalimat) gaya bahasa quote ustadz. JANGAN masukkan teks instruksi.
-            3. quran.alasan: Jelaskan kaitan ayat dengan curhatan (min 3 kalimat).
+            const systemPrompt = `Role: Ulama Psikolog. Konteks: "${input}". 
+            1. summary: Nasehat mendalam. WAJIB awali rujukan kitab shahih otentik (Contoh: "Berdasarkan Kitab Riyadhus Shalihin...").
+            2. kutipan: Quote SINGKAT (max 2 kalimat) gaya bahasa ustadz pilihan yang sangat tajam.
+            3. quran.alasan: Jelaskan DETAIL hubungan ayat dengan curhatan (min 3 kalimat).
             JSON: {summary, quran:{s,a,name,alasan}, asatidz, kutipan, yt_query}`;
 
             try {
@@ -146,29 +146,29 @@
                 const data = await response.json();
                 const res = JSON.parse(data.choices[0].message.content);
                 
-                // CRITICAL RENDER ORDER
+                // ABSOLUTE SYNC: Tunggu data Quran sebelum render APAPUN
                 const q = await getQuranData(res.quran.s, res.quran.a);
-                const arabTxt = q ? q.a : "Memuat teks Arab...";
-                const indoTxt = q ? q.i : "Terjemahan gagal dimuat, mohon ulangi.";
-                
-                globalShareData = { summary: res.summary, dalil: `${res.quran.name} ${res.quran.s}:${res.quran.a}`, arti: indoTxt, alasan: res.quran.alasan };
+                if (!q) throw new Error("Quran API Fail");
+
+                localStats.hikmah++; updateDisplay();
+                globalShareData = { summary: res.summary, dalil: `${res.quran.name} ${res.quran.s}:${res.quran.a}`, arti: q.i, alasan: res.quran.alasan };
 
                 content.innerHTML = `
                     <div class="glass-card p-12 bg-slate-900 text-white text-center">
                         <p class="text-xl italic font-medium leading-relaxed">"${res.summary}"</p>
                     </div>
-                    <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line"></div></div>
+                    <div class="divider-ornament"><div class="divider-line h-[1.5px] w-14 bg-[#064e3b]"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line h-[1.5px] w-14 bg-[#064e3b]"></div></div>
                     <div class="glass-card p-12">
-                        <div class="arabic-font mb-8 text-3xl md:text-4xl">${arabTxt}</div>
+                        <div class="arabic-font mb-8 text-3xl md:text-4xl">${q.a}</div>
                         <p class="text-center text-emerald-700 font-black mb-6 uppercase text-[10px] tracking-[0.4em]">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
-                        <p class="text-slate-600 text-center italic leading-relaxed text-base">"${indoTxt}"</p>
+                        <p class="text-slate-600 text-center italic leading-relaxed text-base">"${q.i}"</p>
                         <div class="mt-10 gradient-border italic leading-loose text-emerald-900">${res.quran.alasan}</div>
                     </div>
-                    <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line"></div></div>
+                    <div class="divider-ornament"><div class="divider-line h-[1.5px] w-14 bg-[#064e3b]"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line h-[1.5px] w-14 bg-[#064e3b]"></div></div>
                     <div class="glass-card p-14 bg-white flex flex-col items-center text-center">
-                        <h3 class="font-black uppercase text-[11px] text-emerald-800 opacity-40 mb-10 tracking-[0.5em] w-full">Nasehat ${res.asatidz}</h3>
-                        <p class="text-3xl italic font-serif text-slate-800 mb-12 px-2 leading-tight font-extrabold italic">"${res.kutipan}"</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}" target="_blank" class="yt-btn mb-12 shadow-lg">Tonton Tausiyah ↗</a>
+                        <h3 class="font-black uppercase text-[10px] text-emerald-800 opacity-40 mb-10 tracking-[0.5em] w-full">Nasehat ${res.asatidz}</h3>
+                        <p class="text-3xl italic font-serif text-slate-800 mb-12 px-2 leading-tight font-extrabold">"${res.kutipan}"</p>
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}" target="_blank" class="bg-red-600 text-white flex items-center justify-center gap-3 p-4 rounded-2xl w-full font-black text-xs uppercase shadow-lg mb-12">Tonton Tausiyah ↗</a>
                         <div class="pt-10 border-t border-slate-50 w-full">
                             <div class="grid grid-cols-3 gap-5">
                                 <button onclick="shareTo('wa')" class="share-btn">
@@ -187,8 +187,9 @@
                         </div>
                     </div>
                 `;
-            } catch (err) { content.innerHTML = `<div class="p-10 text-emerald-900 text-center text-sm font-bold bg-emerald-50 rounded-3xl">Maaf Bapak, sedang ada kendala. Mohon ulangi sedikit lagi.</div>`; }
-            finally { btn.disabled = false; }
+            } catch (err) { 
+                content.innerHTML = `<div class="p-10 text-emerald-900 text-center text-sm font-bold bg-emerald-50 rounded-3xl">Sanubari sedang sibuk Bapak, mohon ulangi sedikit lagi.</div>`; 
+            } finally { btn.disabled = false; }
         }
     </script>
 </body>
