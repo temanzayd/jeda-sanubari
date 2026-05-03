@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.2.7 | Master Fix</title>
+    <title>JedaSanubari v0.2.7 | UI Refined</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -38,7 +38,7 @@
 <body class="flex flex-col items-center">
 
     <header class="text-center mb-12 max-w-sm mt-8">
-        <div class="inline-block px-4 py-1 mb-4 border border-slate-100 rounded-full bg-white shadow-sm text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">v0.2.7 | Master Fix</div>
+        <div class="inline-block px-4 py-1 mb-4 border border-slate-100 rounded-full bg-white shadow-sm text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">v0.2.7 | UI Refined</div>
         <h1 class="text-3xl font-extrabold italic text-slate-900 tracking-tighter">Jeda<span class="text-emerald-700 font-normal">Sanubari</span></h1>
         <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700">❈</div><div class="divider-line"></div></div>
     </header>
@@ -46,20 +46,26 @@
     <div class="w-full max-w-xl glass-card p-8 mb-12">
         <textarea id="userInput" oninput="validate()" placeholder="Tuliskan keresahanmu..." class="w-full bg-transparent focus:outline-none text-lg h-36 resize-none italic leading-relaxed text-slate-700"></textarea>
         <div class="flex flex-col items-center pt-6 border-t border-slate-50">
-            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main mb-8">Jemput Hikmah ↗</button>
+            <button onclick="pancarHikmah()" id="sendBtn" disabled class="btn-main mb-10">Jemput Hikmah ↗</button>
             
-            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-8 text-center">
-                <p class="text-[9px] uppercase tracking-[0.2em] font-black text-slate-400 mb-2">Disclaimer:</p>
-                <p class="text-[10px] leading-relaxed text-slate-500 italic">
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-10 text-center w-full">
+                <p class="text-[11px] uppercase tracking-[0.2em] font-black text-slate-400 mb-3">Disclaimer:</p>
+                <p class="text-[12px] md:text-[13px] leading-relaxed text-slate-500 italic">
                     Ini semua full bikin pakai AI, maklum orang mager. <br>
                     Sangat mungkin hasilnya masih jauh dari relevan dan referensinya salah. <br>
                     Jadikan ini bahan "curhat tipis-tipis" aja ya warga 😁
                 </p>
             </div>
 
-            <div class="flex gap-8 opacity-20">
-                <div class="text-center"><p class="text-[7px] font-black uppercase tracking-widest">Hikmah</p><span id="hikmahCount" class="text-[9px] font-black">0</span></div>
-                <div class="text-center"><p class="text-[7px] font-black uppercase tracking-widest">Share</p><span id="shareCount" class="text-[9px] font-black">0</span></div>
+            <div class="flex gap-12 opacity-30">
+                <div class="text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-1">Hikmah</p>
+                    <span id="hikmahCount" class="text-xs font-black">0</span>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-1">Share</p>
+                    <span id="shareCount" class="text-xs font-black">0</span>
+                </div>
             </div>
         </div>
     </div>
