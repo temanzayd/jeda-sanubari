@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JedaSanubari v0.3.1 | Emerald Absolute</title>
+    <title>JedaSanubari v0.3.2 | Emerald Final Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -29,11 +29,13 @@
         .btn-main:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
         .btn-main:disabled { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; }
         
-        .gradient-border { border-left: 5px solid var(--gold); background: linear-gradient(to right, rgba(6, 78, 59, 0.05), transparent); border-radius: 0 1rem 1rem 0; padding: 1.5rem; color: var(--emerald); font-weight: 600; }
+        /* Updated: Emerald Green for Clarity */
+        .emerald-text { color: var(--emerald); font-weight: 600; }
+        .gradient-border { border-left: 5px solid var(--gold); background: linear-gradient(to right, rgba(6, 78, 59, 0.05), transparent); border-radius: 0 1rem 1rem 0; padding: 1.5rem; color: var(--emerald); font-weight: 600; font-size: 14px; line-height: 1.6; }
         
         .yt-btn { background: #ff0000; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; font-size: 10px; width: 100%; text-decoration: none; }
         
-        .share-btn { border: 1.5px solid var(--emerald); background: #fff; padding: 14px; border-radius: 18px; transition: 0.3s; display: flex; flex-direction: column; items: center; gap: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--emerald); width: 100%; cursor: pointer; }
+        .share-btn { border: 2px solid var(--emerald); background: #fff; padding: 14px; border-radius: 18px; transition: 0.3s; display: flex; flex-direction: column; items: center; gap: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--emerald); width: 100%; cursor: pointer; }
         .share-btn:hover { background: var(--emerald); color: white; transform: translateY(-2px); }
         
         .divider-ornament { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 40px 0; opacity: 0.2; }
@@ -43,7 +45,7 @@
 <body class="flex flex-col items-center">
 
     <header class="text-center mb-16 max-w-sm mt-10">
-        <div class="inline-block px-5 py-2 mb-6 border border-slate-100 rounded-full bg-white shadow-sm text-[9px] font-black text-slate-400 uppercase tracking-[0.4em]">v0.3.1 | Emerald Absolute</div>
+        <div class="inline-block px-5 py-2 mb-6 border border-slate-100 rounded-full bg-white shadow-sm text-[9px] font-black text-slate-400 uppercase tracking-[0.4em]">v0.3.2 | Emerald Final Fix</div>
         <h1 class="text-4xl font-extrabold italic text-slate-900 tracking-tighter">Jeda<span class="text-emerald-700 font-normal">Sanubari</span></h1>
         <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700">❈</div><div class="divider-line"></div></div>
     </header>
@@ -55,7 +57,7 @@
             
             <div class="bg-emerald-50 rounded-2xl p-7 border border-emerald-100 mb-12 text-center w-full">
                 <p class="text-[12px] uppercase tracking-[0.25em] font-black text-emerald-800 mb-3 opacity-60">Penting untuk Diketahui:</p>
-                <p class="text-[14px] md:text-base leading-relaxed text-emerald-900 font-medium italic">
+                <p class="text-[15px] md:text-base leading-relaxed text-emerald-900 font-semibold italic">
                     Ini semua full bikin pakai AI, maklum orang mager. <br>
                     Sangat mungkin hasilnya masih jauh dari relevan dan referensinya salah. <br>
                     Jadikan ini bahan "curhat tipis-tipis" aja ya warga 😁
@@ -64,12 +66,12 @@
 
             <div class="flex gap-20">
                 <div class="text-center">
-                    <p class="text-[12px] font-black uppercase tracking-[0.2em] text-emerald-800 opacity-40 mb-2">Hikmah</p>
-                    <span id="hikmahCount" class="text-xl font-black text-emerald-700">0</span>
+                    <p class="text-[13px] font-black uppercase tracking-[0.2em] text-emerald-800 opacity-50 mb-2">Hikmah</p>
+                    <span id="hikmahCount" class="text-2xl font-black text-emerald-700">0</span>
                 </div>
                 <div class="text-center">
-                    <p class="text-[12px] font-black uppercase tracking-[0.2em] text-emerald-800 opacity-40 mb-2">Share</p>
-                    <span id="shareCount" class="text-xl font-black text-emerald-700">0</span>
+                    <p class="text-[13px] font-black uppercase tracking-[0.2em] text-emerald-800 opacity-50 mb-2">Share</p>
+                    <span id="shareCount" class="text-2xl font-black text-emerald-700">0</span>
                 </div>
             </div>
         </div>
@@ -103,7 +105,9 @@
                     fetch(`https://api.quran.com/api/v4/verses/by_key/${s}:${a}?translations=33`).then(r => r.json())
                 ]);
                 return { a: rA.verses[0].text_uthmani, i: rI.verse.translations[0].text.replace(/<[^>]*>?/gm, '') };
-            } catch (e) { return null; }
+            } catch (e) { 
+                return { a: "Teks Arab tidak termuat", i: "Terjemahan sedang bermasalah" }; 
+            }
         }
 
         function shareTo(platform) {
@@ -123,13 +127,12 @@
             localStats.hikmah++; updateDisplay();
             btn.disabled = true;
             document.getElementById('resultArea').classList.remove('hidden');
-            content.innerHTML = `<div class="p-20 text-center italic text-emerald-800 animate-pulse text-xs tracking-[0.6em] uppercase w-full font-black">Bismillah, Meminta Petunjuk...</div>`;
+            content.innerHTML = `<div class="p-20 text-center italic text-emerald-800 animate-pulse text-sm tracking-[0.6em] uppercase w-full font-black">Bismillah, Meminta Petunjuk...</div>`;
 
-            // FIXED PROMPT: Sanad Mandatory, Detailed Reason, Short Deep Quote
             const systemPrompt = `Role: Ulama Psikolog. Konteks: "${input}". 
-            1. summary: Nasehat (max 4 kalimat). WAJIB awali dengan rujukan kitab shahih otentik (Contoh: "Berdasarkan Kitab Al-Hikam...").
-            2. kutipan: Satu Quote SINGKAT (max 2 kalimat) ustadz pilihan yang sangat tajam dan mendalam.
-            3. quran.alasan: Jelaskan secara DETAIL kaitan ayat dengan curhatan user (minimal 3 kalimat).
+            1. summary: Nasehat (max 4 kalimat). WAJIB diawali dengan rujukan kitab shahih (Contoh: "Berdasarkan Kitab Al-Hikam...").
+            2. kutipan: Quote SINGKAT (max 2 kalimat) ustadz pilihan yang tajam. JANGAN masukkan teks instruksi.
+            3. quran.alasan: Jelaskan secara DETAIL & PANJANG kaitan ayat dengan curhatan (min 3 kalimat).
             JSON: {summary, quran:{s,a,name,alasan}, asatidz, kutipan, yt_query}`;
 
             try {
@@ -147,8 +150,6 @@
                 const res = JSON.parse(data.choices[0].message.content);
                 const q = await getQuranData(res.quran.s, res.quran.a);
                 
-                if (!q) throw new Error("Quran Data Fail");
-
                 globalShareData = { summary: res.summary, dalil: `${res.quran.name} ${res.quran.s}:${res.quran.a}`, arti: q.i, alasan: res.quran.alasan };
 
                 content.innerHTML = `
@@ -160,13 +161,13 @@
                         <div class="arabic-font mb-8 text-3xl md:text-4xl">${q.a}</div>
                         <p class="text-center text-emerald-700 font-black mb-6 uppercase text-[10px] tracking-[0.4em]">${res.quran.name} [${res.quran.s}:${res.quran.a}]</p>
                         <p class="text-slate-600 text-center italic leading-relaxed text-base">"${q.i}"</p>
-                        <div class="mt-10 gradient-border text-[14px] leading-loose italic">${res.quran.alasan}</div>
+                        <div class="mt-10 gradient-border italic leading-loose text-emerald-900">${res.quran.alasan}</div>
                     </div>
                     <div class="divider-ornament"><div class="divider-line"></div><div class="text-emerald-700 text-xl">❈</div><div class="divider-line"></div></div>
                     <div class="glass-card p-14 bg-white flex flex-col items-center text-center">
-                        <h3 class="font-black uppercase text-[10px] text-emerald-800 opacity-30 mb-10 tracking-[0.5em] w-full">Nasehat ${res.asatidz}</h3>
-                        <p class="text-3xl italic font-serif text-slate-800 mb-12 px-2 leading-tight">"${res.kutipan}"</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}" target="_blank" class="yt-btn mb-12 shadow-lg shadow-red-50">Tonton Tausiyah ↗</a>
+                        <h3 class="font-black uppercase text-[10px] text-emerald-800 opacity-40 mb-10 tracking-[0.5em] w-full">Nasehat ${res.asatidz}</h3>
+                        <p class="text-3xl italic font-serif text-slate-800 mb-12 px-2 leading-tight font-extrabold">"${res.kutipan}"</p>
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('Ustadz ' + res.asatidz + ' ' + res.yt_query)}" target="_blank" class="yt-btn mb-12 shadow-lg">Tonton Tausiyah ↗</a>
                         <div class="pt-10 border-t border-slate-50 w-full">
                             <div class="grid grid-cols-3 gap-5">
                                 <button onclick="shareTo('wa')" class="share-btn">
@@ -185,7 +186,7 @@
                         </div>
                     </div>
                 `;
-            } catch (err) { content.innerHTML = `<div class="p-10 text-red-500 text-center text-sm font-bold">Terjadi kendala teknis. Mohon ulangi curhatan Bapak.</div>`; }
+            } catch (err) { content.innerHTML = `<div class="p-10 text-emerald-900 text-center text-sm font-bold bg-emerald-50 rounded-3xl">Ada gangguan koneksi, mohon ulangi sedikit lagi Bapak.</div>`; }
             finally { btn.disabled = false; }
         }
     </script>
